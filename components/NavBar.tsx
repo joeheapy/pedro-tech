@@ -34,7 +34,7 @@ export default function NavBar() {
           <SignedIn>
             <Link
               href="/mealplan"
-              className="text-gray-700 hover:text-emerald-500 transition-colors"
+              className="text-gray-700 hover:text-emerald-500 transition-colors font-medium"
             >
               Mealplan
             </Link>
@@ -56,7 +56,7 @@ export default function NavBar() {
 
             {/* Sign Out Button */}
             <SignOutButton>
-              <button className="ml-4 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition">
+              <button className="ml-4 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition font-semibold">
                 Sign Out
               </button>
             </SignOutButton>
@@ -65,22 +65,21 @@ export default function NavBar() {
           <SignedOut>
             <Link
               href="/"
-              className="text-gray-700 hover:text-emerald-500 transition-colors"
+              className="text-gray-700 hover:text-emerald-500 transition-colors font-medium"
             >
               Home
             </Link>
             <Link
               href={isSignedIn ? '/subscribe' : '/sign-up'}
-              className="text-gray-700 hover:text-emerald-500 transition-colors"
+              className="text-gray-700 hover:text-emerald-500 transition-colors font-medium"
             >
               Subscribe
             </Link>
-
             <Link
               href="/sign-up"
-              className="px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition"
+              className="px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition font-semibold"
             >
-              Sign Up
+              Sign-in
             </Link>
           </SignedOut>
         </div>

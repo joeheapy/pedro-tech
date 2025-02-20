@@ -1,17 +1,14 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 import './globals.css'
-import NavBar from '@/components/NavBar'
+import NavBar from '@/components/navbar'
 import { ClerkProvider } from '@clerk/nextjs'
+import ReactQueryClientProvider from '@/components/react-query-client-provider'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const montserrat = Montserrat({
   subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-montserrat',
 })
 
 export const metadata: Metadata = {
@@ -28,10 +25,14 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${montserrat.variable} font-montserrat antialiased bg-gray-50 text-gray-900`}
         >
-          <NavBar />
-          {children}
+          <ReactQueryClientProvider>
+            <NavBar />
+            <main className="max-w-7xl mx-auto pt-16 p-4 min-h-screen">
+              {children}
+            </main>
+          </ReactQueryClientProvider>
         </body>
       </html>
     </ClerkProvider>
