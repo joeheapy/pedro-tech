@@ -63,6 +63,8 @@ export async function POST(request: NextRequest) {
       ],
       customer_email: email,
       mode: 'subscription',
+      // Clerk user ID and plan type sent to Strip as metadata
+      // so we can get this back from Strip in  stripe-webhook route.
       metadata: { clerkUserId: userId, planType },
       // Success URL is provided by Stripe
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?session_id={CHECKOUT_SESSION_ID}`,
