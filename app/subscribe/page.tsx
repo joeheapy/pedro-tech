@@ -90,7 +90,8 @@ export default function Subscribe() {
 
   return (
     <div className="px-4 py-8 sm:py-12 lg:py-16">
-      <Toaster position="top-right" /> {/* Optional: For toast notifications */}
+      <Toaster position="bottom-right" />{' '}
+      {/* Optional: For toast notifications */}
       {/* Section Header */}
       <div>
         <h2 className="text-3xl font-bold text-center mt-12 sm:text-5xl tracking-tight">
@@ -102,17 +103,18 @@ export default function Subscribe() {
         </p>
       </div>
       {/* Cards Container */}
-      <div className="mt-12 container mx-auto space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
+      <div className="mt-12 container mx-auto space-y-12 sm:grid-cols-1 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
         {/* Map over availablePlans to render plan cards */}
         {availablePlans.map((plan, key) => (
           <div
             key={key}
             className="
-              relative p-8 
+              relative p-8
               border border-gray-200 rounded-2xl shadow-sm 
               flex flex-col
               hover:shadow-md hover:scale-[1.02] 
               transition-transform duration-200 ease-out
+              bg-white
             "
           >
             <div className="flex-1">

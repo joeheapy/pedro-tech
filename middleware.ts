@@ -29,8 +29,8 @@ export default clerkMiddleware(async (auth, req) => {
 
   console.log('Middleware check:', pathname, isPublicRoute(req), userId)
 
-  // If it's the check-subscription route, skip logic to avoid loops
-  if (pathname === '/api/check-subscription') {
+  // Skip API routes to prevent loops
+  if (pathname.startsWith('/api/')) {
     return NextResponse.next()
   }
 
@@ -39,8 +39,8 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL('/sign-up', origin))
   }
 
-  // Add this new condition to handle root path redirects
-  if ((pathname === '/' || isSignUpRoute(req)) && userId) {
+  // Check subscription status for signed-in users on public routes
+  if (userId && (pathname === '/' || isSignUpRoute(req))) {
     try {
       console.log('Checking subscription for user:', userId)
       const checkSubRes = await fetch(
@@ -56,19 +56,24 @@ export default clerkMiddleware(async (auth, req) => {
       if (checkSubRes.ok) {
         const data = await checkSubRes.json()
         console.log('Subscription check response:', data)
+
+        // If user has active subscription, always redirect to mealplan
         if (data.subscriptionActive) {
-          console.log('Redirecting to mealplan - active subscription')
+          console.log('Active subscription found - redirecting to mealplan')
           return NextResponse.redirect(new URL('/mealplan', origin))
         }
-        return NextResponse.redirect(new URL('/subscribe', origin))
       }
     } catch (error) {
       console.error('Subscription check failed:', error)
+    }
+
+    // Only redirect to subscribe if coming from sign-up route
+    if (isSignUpRoute(req)) {
       return NextResponse.redirect(new URL('/subscribe', origin))
     }
   }
 
-  // For mealplan routes, only check if they're allowed to access
+  // Protect mealplan and profile routes
   if ((isMealPlanRoute(req) || isProfileRoute(req)) && userId) {
     try {
       const checkSubRes = await fetch(
@@ -90,7 +95,6 @@ export default clerkMiddleware(async (auth, req) => {
     }
   }
 
-  // Allow all other requests
   return NextResponse.next()
 })
 
