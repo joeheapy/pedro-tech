@@ -1,4 +1,4 @@
-// app/api/webhooks/route.ts
+// app/api/stripe-webhook/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/app/lib/prisma' // <-- import Prisma client

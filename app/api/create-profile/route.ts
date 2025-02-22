@@ -25,6 +25,11 @@
  * - 500: Internal server error
  */
 
+prisma
+  .$connect()
+  .then(() => console.log('Database connected successfully'))
+  .catch((e) => console.error('Database connection failed:', e))
+
 import { NextResponse } from 'next/server'
 import { prisma } from '@/app/lib/prisma'
 import { currentUser } from '@clerk/nextjs/server'

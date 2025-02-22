@@ -14,12 +14,7 @@
  * Required Environment Variables:
  * - NEXT_PUBLIC_BASE_URL: Base URL of the application
  * - STRIPE_SECRET_KEY: Stripe API secret key
- *
- * @route POST /api/checkout
- * @param {Object} request.body.planType - Subscription plan type ('week', 'month', 'year')
- * @param {Object} request.body.userId - Clerk user ID
- * @param {Object} request.body.email - User's email address
- * @returns {Object} JSON response with checkout URL or error message
+ 
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -29,7 +24,6 @@ import Stripe from 'stripe'
 
 export async function POST(request: NextRequest) {
   try {
-    // Get and validate data to send to Stripe
     const { planType, userId, email } = await request.json()
 
     if (!planType || !userId || !email) {
