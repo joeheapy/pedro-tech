@@ -1,9 +1,33 @@
+/**
+ * Create Profile API Route Handler
+ *
+ * This API route handles the creation of user profiles after successful Clerk authentication.
+ * It ensures each user has a corresponding profile in the database for subscription management.
+ *
+ * Flow:
+ * 1. Verifies user authentication via Clerk
+ * 2. Validates user email existence
+ * 3. Checks for existing profile to prevent duplicates
+ * 4. Creates new profile with default subscription settings
+ *
+ * Database Schema:
+ * - userId: Unique identifier from Clerk
+ * - email: User's primary email address
+ * - subscriptionActive: Boolean flag for subscription status
+ * - subscriptionTier: Current subscription level
+ * - stripeSubscriptionId: Associated Stripe subscription ID
+ *
+ * @route POST /api/create-profile
+ * @returns {Object} JSON response with success/error message and appropriate status code
+ * - 201: Profile created successfully
+ * - 400: Missing email address
+ * - 404: User not found in Clerk
+ * - 500: Internal server error
+ */
+
 import { NextResponse } from 'next/server'
 import { prisma } from '@/app/lib/prisma'
 import { currentUser } from '@clerk/nextjs/server'
-
-// This file completes some checks and creates a profile for the user in the database.
-// It is called when the user signs up for the first time.
 
 // Check if the user is signed in and create a profile for them
 export async function POST() {

@@ -1,3 +1,27 @@
+/**
+ * Stripe Checkout Session Route Handler
+ *
+ * This API route creates a Stripe Checkout session for subscription payments.
+ * It validates the incoming request data and generates a checkout URL for the user.
+ *
+ * Flow:
+ * 1. Validates required fields (planType, userId, email)
+ * 2. Verifies plan type is valid
+ * 3. Retrieves Stripe price ID for the selected plan
+ * 4. Creates Stripe checkout session with subscription configuration
+ * 5. Returns checkout URL or error response
+ *
+ * Required Environment Variables:
+ * - NEXT_PUBLIC_BASE_URL: Base URL of the application
+ * - STRIPE_SECRET_KEY: Stripe API secret key
+ *
+ * @route POST /api/checkout
+ * @param {Object} request.body.planType - Subscription plan type ('week', 'month', 'year')
+ * @param {Object} request.body.userId - Clerk user ID
+ * @param {Object} request.body.email - User's email address
+ * @returns {Object} JSON response with checkout URL or error message
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/app/lib/stripe'
 import { getPriceIdFromType } from '@/app/lib/plans'
@@ -5,6 +29,7 @@ import Stripe from 'stripe'
 
 export async function POST(request: NextRequest) {
   try {
+    // Get and validate data to send to Stripe
     const { planType, userId, email } = await request.json()
 
     if (!planType || !userId || !email) {
@@ -39,10 +64,11 @@ export async function POST(request: NextRequest) {
       customer_email: email,
       mode: 'subscription',
       metadata: { clerkUserId: userId, planType },
+      // Success URL is provided by Stripe
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/subscribe`,
     })
-    // This code returns the session URL to the Stripe Checkout page
+    // This code returns the session URL for the Stripe Checkout page
     return NextResponse.json({ url: session.url })
 
     // Modified catch block

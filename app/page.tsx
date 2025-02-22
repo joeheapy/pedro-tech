@@ -7,16 +7,16 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <div className="px-4 py-8 sm:py-12 lg:py-16 max-w-7xl mx-auto">
+    <div className="px-4 py-10 sm:py-12 lg:py-16 max-w-7xl mx-auto">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-emerald-400 to-emerald-600 text-white rounded-lg mb-12 p-8 text-center">
-        <h1 className="text-4xl font-bold mb-4">Personalized AI Meal Plans</h1>
+      <section className="bg-gradient-to-r text-black rounded-lg sm:mt-4 md:mt-10 mb-12 p-8 text-center">
+        <h1 className="text-6xl font-bold mb-4">Write your service story</h1>
         <p className="text-xl mb-6">
           Let our AI do the planning. You focus on cooking and enjoying!
         </p>
         <Link
           href="/sign-up"
-          className="inline-block bg-white text-emerald-500 font-medium px-5 py-3 rounded hover:bg-gray-100 transition-colors"
+          className="inline-block bg-emerald-600 text-white font-medium px-5 py-3 rounded hover:bg-emerald-900 transition-colors"
         >
           Get Started
         </Link>

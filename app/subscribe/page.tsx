@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { availablePlans } from '@/app/lib/plans'
 // import type { Plan } from '@/app/lib/plans'
-// import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast' // Optional: For better user feedback
 
 // Define response types
 type SubscribeResponse = {
@@ -17,6 +17,7 @@ type SubscribeError = {
   error: string
 }
 
+// This function sends a POST request to the /api/checkout route to subscribe the user to a plan
 async function subscribeToPlan(
   planType: string,
   userId: string,
@@ -40,6 +41,7 @@ async function subscribeToPlan(
   return data
 }
 
+// This component renders the pricing page with subscription plans
 export default function Subscribe() {
   const { user } = useUser()
   const router = useRouter()
@@ -58,6 +60,20 @@ export default function Subscribe() {
 
       return subscribeToPlan(planType, userId, email)
     },
+
+    onMutate: () => {
+      toast.loading('Heading to checkout...')
+    },
+
+    onSuccess: (data) => {
+      window.location.href = data.url
+      toast.success('Heading to checkout...')
+    },
+
+    onError: (error) => {
+      console.log(error)
+      toast.error('Something went wrong. Please try again.')
+    },
   })
 
   // Handler for subscribing to a plan
@@ -74,7 +90,7 @@ export default function Subscribe() {
 
   return (
     <div className="px-4 py-8 sm:py-12 lg:py-16">
-      {/* <Toaster position="top-right" /> Optional: For toast notifications */}
+      <Toaster position="top-right" /> {/* Optional: For toast notifications */}
       {/* Section Header */}
       <div>
         <h2 className="text-3xl font-bold text-center mt-12 sm:text-5xl tracking-tight">
