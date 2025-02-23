@@ -21,6 +21,7 @@ const isMealPlanRoute = createRouteMatcher(['/mealplan(.*)'])
 const isProfileRoute = createRouteMatcher(['/profile(.*)'])
 
 const isSignUpRoute = createRouteMatcher(['/sign-up(.*)'])
+// const isSignInRoute = createRouteMatcher(['/sign-in(.*)'])
 
 // Clerk's middleware
 export default clerkMiddleware(async (auth, req) => {
