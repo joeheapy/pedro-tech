@@ -10,15 +10,15 @@ export default function HomePage() {
     <div className="px-4 py-10 sm:py-12 lg:py-16 max-w-7xl mx-auto">
       {/* Hero Section */}
       <section className="rounded-lg sm:mt-4 md:mt-10 mb-12 p-8 text-center">
-        <h1 className="text-6xl font-bold mb-4 text-foreground">
+        <h1 className="text-7xl font-bold mb-6 text-foreground">
           Write your service story
         </h1>
-        <p className="text-xl mb-6 text-foreground/80">
-          Let our AI do the planning. You focus on cooking and enjoying!
+        <p className="text-2xl mb-12 text-foreground/80">
+          A simple tool for people-centred service design with AI.
         </p>
         <Link
           href="/sign-up"
-          className="inline-block px-6 py-4 bg-primary text-primary-foreground rounded-md hover-primary text-lg font-semibold"
+          className="inline-block text-2xl px-6 py-4 bg-primary text-primary-foreground rounded-md hover-primary font-semibold"
         >
           Get Started
         </Link>
@@ -28,9 +28,9 @@ export default function HomePage() {
       <section id="how-it-works" className="container mx-auto mb-12 px-4">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-semibold text-foreground">
-            How It Works
+            How it works
           </h2>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 text-xl text-muted-foreground">
             Follow these simple steps to get your personalized meal plan
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function HomePage() {
             <h3 className="text-xl font-medium mb-2 text-foreground">
               Create an Account
             </h3>
-            <p className="text-center text-muted-foreground max-w-sm">
+            <p className="text-center text-xl text-muted-foreground max-w-sm">
               Sign up or sign in to access your personalized meal plans.
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function HomePage() {
             <h3 className="text-xl font-medium mb-2 text-foreground">
               Set Your Preferences
             </h3>
-            <p className="text-center text-muted-foreground">
+            <p className="text-center text-xl text-muted-foreground">
               Input your dietary preferences and goals to tailor your meal
               plans.
             </p>
@@ -120,7 +120,7 @@ export default function HomePage() {
             <h3 className="text-xl font-medium mb-2 text-foreground">
               Receive Your Meal Plan
             </h3>
-            <p className="text-center text-muted-foreground">
+            <p className="text-center text-xl text-muted-foreground">
               Get your customized meal plan delivered weekly to your account.
             </p>
           </div>

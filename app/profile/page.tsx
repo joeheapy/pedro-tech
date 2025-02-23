@@ -187,15 +187,14 @@ export default function ProfilePage() {
 
   // Main Profile Page UI
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Toaster position="top-center" />{' '}
-      {/* Optional: For toast notifications */}
-      <div className="w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="min-h-screen flex items-start justify-center p-8 sm:pt-16 lg:pt-24 bg-background">
+      <Toaster position="top-center" />
+      <div className="w-full max-w-5xl bg-card shadow-md rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left Panel: Profile Information */}
-          <div className="w-full md:w-1/3 p-6 bg-emerald-500 text-white flex flex-col items-center">
+          <div className="w-full md:w-1/3 p-6 bg-primary text-primary-foreground flex flex-col items-center">
             <Image
-              src={user.imageUrl || '/default-avatar.png'} // Provide a default avatar if none
+              src={user.imageUrl || '/default-avatar.png'}
               alt="User Avatar"
               width={100}
               height={100}
@@ -205,47 +204,46 @@ export default function ProfilePage() {
               {user.firstName} {user.lastName}
             </h1>
             <p className="mb-4">{user.primaryEmailAddress?.emailAddress}</p>
-            {/* Add more profile details or edit options as needed */}
           </div>
 
           {/* Right Panel: Subscription Details */}
-          <div className="w-full md:w-2/3 p-6 bg-gray-50">
-            <h2 className="text-2xl font-bold mb-6 text-emerald-700">
-              Subscription Details
+          <div className="w-full md:w-2/3 p-6 bg-muted">
+            <h2 className="text-2xl font-bold mb-6 text-foreground">
+              Subscription details
             </h2>
 
             {isLoading ? (
-              <div className="flex items-center">
+              <div className="flex items-center text-muted-foreground">
                 <Spinner />
                 <span className="ml-2">Loading subscription details...</span>
               </div>
             ) : isError ? (
-              <p className="text-red-500">{error?.message}</p>
+              <p className="text-destructive">{error?.message}</p>
             ) : subscription ? (
               <div className="space-y-6">
                 {/* Current Subscription Info */}
-                <div className="bg-white shadow-md rounded-lg p-4 border border-emerald-200">
-                  <h3 className="text-xl font-semibold mb-2 text-emerald-600">
-                    Current Plan
+                <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                  <h3 className="text-xl font-semibold mb-2 text-primary">
+                    Current plan
                   </h3>
                   {subscription?.subscription ? (
                     <>
-                      <p className="text-background mb-2">
+                      <p className="text-foreground mb-2">
                         <strong>Plan:</strong>{' '}
                         {currentPlan?.name ||
                           subscription.subscription.subscriptionTier}
                       </p>
-                      <p className="text-background mb-2">
+                      <p className="text-foreground mb-2">
                         <strong>Amount:</strong>{' '}
                         {currentPlan ? `$${currentPlan.amount}` : 'N/A'}
                       </p>
-                      <p className="text-background mb-2">
+                      <p className="text-foreground font-bold mb-2">
                         <strong>Status:</strong>{' '}
                         <span
                           className={
                             subscription.subscription.subscriptionActive
-                              ? 'text-emerald-600'
-                              : 'text-red-600'
+                              ? 'text-primary'
+                              : 'text-destructive'
                           }
                         >
                           {subscription.subscription.subscriptionActive
@@ -262,14 +260,14 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Change Subscription Plan */}
-                <div className="bg-white shadow-md rounded-lg p-4 border border-emerald-200">
-                  <h3 className="text-xl font-semibold mb-2 text-emerald-600">
-                    Change Subscription Plan
+                <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                  <h3 className="text-xl font-semibold mb-2 text-primary">
+                    Change subscription plan
                   </h3>
                   <select
                     onChange={handleChangePlan}
                     defaultValue={currentPlan?.interval}
-                    className="w-full px-3 py-2 border border-emerald-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                     disabled={changePlanMutation.isPending}
                   >
                     <option value="" disabled>
@@ -283,27 +281,21 @@ export default function ProfilePage() {
                   </select>
                   <button
                     onClick={handleConfirmChangePlan}
-                    className="mt-3 p-2 bg-emerald-500 rounded-lg text-white"
+                    className="mt-3 p-2 bg-primary text-lg font-semibold text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Save Change
                   </button>
-                  {changePlanMutation.isPending && (
-                    <div className="flex items-center mt-2">
-                      <Spinner />
-                      <span className="ml-2">Updating plan...</span>
-                    </div>
-                  )}
                 </div>
 
                 {/* Unsubscribe */}
-                <div className="bg-white shadow-md rounded-lg p-4 border border-emerald-200">
-                  <h3 className="text-xl font-semibold mb-2 text-emerald-600">
-                    Unsubscribe
+                <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                  <h3 className="text-xl font-semibold mb-2 text-primary">
+                    Cancel subscription
                   </h3>
                   <button
                     onClick={handleUnsubscribe}
                     disabled={unsubscribeMutation.isPending}
-                    className={`w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors ${
+                    className={`w-full text-lg font-semibold bg-destructive text-destructive-foreground py-2 px-4 rounded-md hover:bg-destructive/90 transition-colors ${
                       unsubscribeMutation.isPending
                         ? 'opacity-50 cursor-not-allowed'
                         : ''
@@ -316,7 +308,9 @@ export default function ProfilePage() {
                 </div>
               </div>
             ) : (
-              <p>You are not subscribed to any plan.</p>
+              <p className="text-muted-foreground">
+                You are not subscribed to any plan.
+              </p>
             )}
           </div>
         </div>

@@ -89,51 +89,52 @@ export default function Subscribe() {
   }
 
   return (
-    <div className="px-4 py-8 sm:py-12 lg:py-16">
-      <Toaster position="bottom-right" />{' '}
-      {/* Optional: For toast notifications */}
+    <div className="px-4 py-8 sm:py-12 lg:py-16 bg-background">
+      <Toaster position="bottom-right" />
+
       {/* Section Header */}
       <div>
-        <h2 className="text-3xl font-bold text-center mt-12 sm:text-5xl tracking-tight">
+        <h2 className="text-3xl font-bold text-center mt-12 sm:text-5xl tracking-tight text-foreground">
           Pricing
         </h2>
-        <p className="max-w-3xl mx-auto mt-4 text-xl text-center">
+        <p className="max-w-3xl mx-auto mt-4 text-xl text-center text-muted-foreground">
           Get started on our weekly plan or upgrade to monthly or yearly when
-          you’re ready.
+          you are ready.
         </p>
       </div>
+
       {/* Cards Container */}
       <div className="mt-12 container mx-auto space-y-12 sm:grid-cols-1 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
-        {/* Map over availablePlans to render plan cards */}
         {availablePlans.map((plan, key) => (
           <div
             key={key}
             className="
-              relative p-8
-              border border-gray-200 rounded-2xl shadow-sm 
-              flex flex-col
-              hover:shadow-md hover:scale-[1.02] 
-              transition-transform duration-200 ease-out
-              bg-white
-            "
+            relative p-8
+            border border-border rounded-2xl shadow-sm 
+            flex flex-col
+            hover:shadow-md hover:scale-[1.02] 
+            transition-transform duration-200 ease-out
+            bg-card text-card-foreground
+          "
           >
             <div className="flex-1">
-              {/* Conditionally render "Most popular" label */}
               {plan.isPopular && (
-                <p className="absolute top-0 py-1.5 px-4 bg-emerald-500 text-white rounded-full text-xs font-semibold uppercase tracking-wide transform -translate-y-1/2">
+                <p className="absolute top-0 py-1.5 px-4 bg-primary text-primary-foreground rounded-full text-xs font-semibold uppercase tracking-wide transform -translate-y-1/2">
                   Most popular
                 </p>
               )}
-              <h3 className="text-xl font-semibold">{plan.name}</h3>
-              <p className="mt-4 flex items-baseline">
+              <h3 className="text-xl font-semibold text-foreground">
+                {plan.name}
+              </h3>
+              <p className="mt-4 flex items-baseline text-foreground">
                 <span className="text-5xl font-extrabold tracking-tight">
                   ${plan.amount}
                 </span>
-                <span className="ml-1 text-xl font-semibold">
+                <span className="ml-1 text-xl font-semibold text-muted-foreground">
                   /{plan.interval}
                 </span>
               </p>
-              <p className="mt-6">{plan.description}</p>
+              <p className="mt-6 text-muted-foreground">{plan.description}</p>
               <ul role="list" className="mt-6 space-y-4">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex">
@@ -147,11 +148,13 @@ export default function Subscribe() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="flex-shrink-0 w-6 h-6 text-emerald-500"
+                      className="flex-shrink-0 w-6 h-6 text-primary"
                     >
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
-                    <span className="ml-3">{feature}</span>
+                    <span className="ml-3 text-muted-foreground">
+                      {feature}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -160,9 +163,10 @@ export default function Subscribe() {
             <button
               className={`${
                 plan.interval === 'month'
-                  ? 'bg-emerald-500 text-white  hover:bg-emerald-600 '
-                  : 'bg-emerald-100 text-emerald-700  hover:bg-emerald-200 '
-              }  mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium disabled:bg-gray-400 disabled:cursor-not-allowed`}
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/90'
+              } mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium
+            disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed`}
               onClick={() => handleSubscribe(plan.interval)}
               disabled={isPending}
             >
