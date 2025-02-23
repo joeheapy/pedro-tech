@@ -5,6 +5,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useUser, SignedIn, SignedOut, SignOutButton } from '@clerk/nextjs'
+import { ThemeToggle } from './theme/ThemeToggle'
+import { BookOpenText } from 'lucide-react'
 
 export default function NavBar() {
   const { isLoaded, isSignedIn, user } = useUser()
@@ -15,32 +17,32 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-gray-50/90 backdrop-blur-sm z-50">
+    <nav className="fixed top-0 left-0 w-full bg-background/95 backdrop-blur-sm z-50 border-b border-border">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Brand / Logo */}
-        <Link href="/">
-          <Image
-            className="text-xl font-bold text-emerald-700 cursor-pointer"
-            src="/logo.png" // Ensure this path is correct or replace with your logo path
-            width={60}
-            height={60}
-            alt="Logo"
+        <Link href="/" className="flex items-center">
+          <BookOpenText
+            className="h-12 w-12 text-primary hover:text-primary/90 transition-colors"
+            aria-label="Home"
           />
         </Link>
 
         {/* Navigation Links */}
         <div className="space-x-6 flex items-center">
-          {/* Authentication Buttons */}
+          <ThemeToggle />
           <SignedIn>
             <Link
               href="/mealplan"
-              className="text-gray-700 hover:text-emerald-500 transition-colors font-medium"
+              className="text-foreground hover-text-primary font-medium"
             >
               Mealplan
             </Link>
             {/* Profile Picture */}
             {user?.imageUrl ? (
-              <Link href="/profile">
+              <Link
+                href="/profile"
+                className="hover:opacity-80 transition-opacity duration-200"
+              >
                 <Image
                   src={user.imageUrl}
                   alt="Profile Picture"
@@ -50,13 +52,12 @@ export default function NavBar() {
                 />
               </Link>
             ) : (
-              // Placeholder for users without a profile picture
-              <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+              <div className="w-10 h-10 bg-muted rounded-full"></div>
             )}
 
             {/* Sign Out Button */}
             <SignOutButton>
-              <button className="ml-4 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-900 transition font-semibold">
+              <button className="ml-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover-primary font-semibold">
                 Sign Out
               </button>
             </SignOutButton>
@@ -65,21 +66,21 @@ export default function NavBar() {
           <SignedOut>
             <Link
               href="/"
-              className="text-gray-700 hover:text-emerald-500 transition-colors font-medium"
+              className="text-foreground hover-text-primary font-medium"
             >
               Home
             </Link>
             <Link
               href={isSignedIn ? '/subscribe' : '/sign-up'}
-              className="text-gray-700 hover:text-emerald-500 transition-colors font-medium"
+              className="text-foreground hover-text-primary font-medium"
             >
               Subscribe
             </Link>
             <Link
               href="/sign-up"
-              className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-900 transition font-semibold"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover-primary font-semibold"
             >
-              Sign-in
+              Sign in
             </Link>
           </SignedOut>
         </div>

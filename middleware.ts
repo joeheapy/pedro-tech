@@ -7,10 +7,11 @@ const isPublicRoute = createRouteMatcher([
   '/',
   '/sign-up(.*)',
   '/subscribe(.*)',
-  '/api/create-profile',
   '/api/checkout(.*)',
-  '/api/webhook(.*)',
+  '/api/stripe-webhook(.*)',
   '/api/check-subscription(.*)',
+  '/create-profile(.*)', // Add this line
+  '/api/create-profile(.*)', // And this line
 ])
 
 // 2. Define a route group for Meal Plan. We want to check subscription
@@ -39,8 +40,15 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL('/sign-up', origin))
   }
 
-  // Check subscription status for signed-in users on public routes
-  if (userId && (pathname === '/' || isSignUpRoute(req))) {
+  if (userId && isSignUpRoute(req)) {
+    return NextResponse.redirect(new URL('/create-profile', origin))
+  }
+
+  if (
+    userId &&
+    (isSignUpRoute(req) ||
+      (pathname === '/' && !req.headers.get('referer')?.includes('/mealplan')))
+  ) {
     try {
       console.log('Checking subscription for user:', userId)
       const checkSubRes = await fetch(
@@ -57,8 +65,8 @@ export default clerkMiddleware(async (auth, req) => {
         const data = await checkSubRes.json()
         console.log('Subscription check response:', data)
 
-        // If user has active subscription, always redirect to mealplan
-        if (data.subscriptionActive) {
+        // If user has active subscription, redirect to mealplan only if not already there
+        if (data.subscriptionActive && !isMealPlanRoute(req)) {
           console.log('Active subscription found - redirecting to mealplan')
           return NextResponse.redirect(new URL('/mealplan', origin))
         }

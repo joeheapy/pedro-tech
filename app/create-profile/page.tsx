@@ -31,7 +31,7 @@ export default function CreateProfile() {
   const { mutate, isPending } = useMutation({
     mutationFn: createProfileRequest,
     onSuccess: () => {
-      router.push('/subscribe')
+      router.push('/')
     },
     onError: (error) => {
       console.error('Error creating profile:', error)
@@ -44,5 +44,14 @@ export default function CreateProfile() {
     }
   }, [isLoaded, isSignedIn, isPending, mutate])
 
-  return <div> Processing sign-in...</div>
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
+        <p className="text-foreground text-lg font-medium">
+          Processing sign-in...
+        </p>
+      </div>
+    </div>
+  )
 }
