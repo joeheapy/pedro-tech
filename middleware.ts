@@ -96,11 +96,16 @@ export default clerkMiddleware(async (auth, req) => {
       )
 
       if (!checkSubRes.ok || !(await checkSubRes.json()).subscriptionActive) {
-        return NextResponse.redirect(new URL('/subscribe', origin))
+        // Redirect with a searchParam that can be used to show the toast
+        return NextResponse.redirect(
+          new URL('/subscribe?error=subscription-required', origin)
+        )
       }
     } catch (error) {
       console.error('Error checking subscription:', error)
-      return NextResponse.redirect(new URL('/subscribe', origin))
+      return NextResponse.redirect(
+        new URL('/subscribe?error=subscription-check-failed', origin)
+      )
     }
   }
 

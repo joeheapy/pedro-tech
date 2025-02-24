@@ -74,7 +74,7 @@ export default function NavBar() {
               href={isSignedIn ? '/subscribe' : '/sign-up'}
               className="text-foreground hover-text-primary font-medium"
             >
-              Subscribe
+              Pricing
             </Link>
             <Link
               href="/sign-up"

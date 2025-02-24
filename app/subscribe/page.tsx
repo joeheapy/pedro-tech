@@ -2,11 +2,11 @@
 
 // import { useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { availablePlans } from '@/app/lib/plans'
-// import type { Plan } from '@/app/lib/plans'
-import toast, { Toaster } from 'react-hot-toast' // Optional: For better user feedback
+import toast, { Toaster } from 'react-hot-toast'
+import { useEffect } from 'react'
 
 // Define response types
 type SubscribeResponse = {
@@ -48,6 +48,25 @@ export default function Subscribe() {
   const userId = user?.id
   const email = user?.emailAddresses[0].emailAddress || ''
 
+  // New code
+  // Handle subscription error messages
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const error = searchParams.get('error')
+
+    if (error) {
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, '', newUrl)
+
+      if (error === 'subscription-required') {
+        toast.error('You need an active subscription to access this page')
+      } else if (error === 'subscription-check-failed') {
+        toast.error('Unable to verify subscription status. Please try again.')
+      }
+    }
+  }, [searchParams])
+
   const { mutate, isPending } = useMutation<
     SubscribeResponse,
     Error,
@@ -67,7 +86,7 @@ export default function Subscribe() {
 
     onSuccess: (data) => {
       window.location.href = data.url
-      toast.success('Heading to checkout...')
+      // toast.success('Heading to checkout...')
     },
 
     onError: (error) => {
