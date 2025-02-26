@@ -23,6 +23,27 @@
   --border: #e5e7eb;
   --input: #e5e7eb;
   --ring: #059669;
+
+  /* Graph paper variables */
+  --graph-background: #f9f9f9;
+  --graph-lines: #ececec;
+  --graph-size: 20px;
+
+  /* Teal to Lime gradient */
+  --gradient1-from: 166 76% 87%;
+  --gradient1-to: 156.2 71.6% 66.9%;
+
+  /* Blue to Dark gradient */
+  --gradient2-from: 213.3 96.9% 87.3%;
+  --gradient2-to: 229.7 93.5% 81.8%;
+
+  /* Pink to Dark gradient */
+  --gradient3-from: 320 84% 85%;
+  --gradient3-to: 291.1 93.1% 82.9%;
+
+  /* Orange to Yellow gradient */
+  --gradient4-from: 19 83% 81%;
+  --gradient4-to: 49 83% 81%;
 }
 
 [data-theme='dark'] {
@@ -46,6 +67,28 @@
   --border: #374151;
   --input: #374151;
   --ring: #10b981;
+
+  /* Graph paper variables - dark mode */
+  --graph-background: #121212;
+  --graph-lines: #2a2a2a;
+  --graph-size: 20px;
+
+  /* Dark mode versions */
+  /* Teal to Lime gradient */
+  --gradient1-from: 166 76% 30%; /*Lighter colour*/
+  --gradient1-to: 142 71% 20%; /*Darker colour*/
+
+  /* Blue to Dark gradient */
+  --gradient2-from: 213 94% 48%;
+  --gradient2-to: 213 94% 24%;
+
+  /* Pink to Dark gradient */
+  --gradient3-from: 335.8 74.4% 35.3%;
+  --gradient3-to: 336.2 83.9% 17.1%;
+
+  /* Orange to Yellow gradient */
+  --gradient4-from: 27 90% 60%;
+  --gradient4-to: 27 100% 30%;
 }
 
 @layer base {
@@ -54,6 +97,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: linear-gradient(var(--graph-lines) 1px, transparent 1px),
+      linear-gradient(90deg, var(--graph-lines) 1px, transparent 1px);
+    background-size: var(--graph-size) var(--graph-size);
   }
   /* Add transition styles for interactive elements */
   a,
@@ -69,5 +115,61 @@
   }
   .hover-text-primary {
     @apply hover:text-[var(--primary)];
+  }
+
+  /* Graph paper utility class - can be applied to any element */
+  .graph-paper {
+    background-image: linear-gradient(var(--graph-lines) 1px, transparent 1px),
+      linear-gradient(90deg, var(--graph-lines) 1px, transparent 1px);
+    background-size: var(--graph-size) var(--graph-size);
+    background-color: var(--graph-background);
+  }
+
+  /* Original gradients */
+
+  .gradient-teal-lime {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient1-from))] to-[hsl(var(--gradient1-to))];
+  }
+
+  .gradient-blue-dark {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient2-from))] to-[hsl(var(--gradient2-to))];
+  }
+
+  .gradient-pink-dark {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient3-from))] to-[hsl(var(--gradient3-to))];
+  }
+
+  .gradient-orange-yellow {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient4-from))] to-[hsl(var(--gradient4-to))];
+  }
+
+  /* Reverse gradients */
+  .gradient-teal-lime-reverse {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient1-to))] to-[hsl(var(--gradient1-from))];
+  }
+
+  .gradient-blue-dark-reverse {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient2-to))] to-[hsl(var(--gradient2-from))];
+  }
+
+  .gradient-pink-dark-reverse {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient3-to))] to-[hsl(var(--gradient3-from))];
+  }
+
+  .gradient-orange-yellow-reverse {
+    @apply bg-gradient-to-t from-[hsl(var(--gradient4-to))] to-[hsl(var(--gradient4-from))];
+  }
+}
+
+@layer components {
+  .input-custom {
+    @apply w-full px-4 py-2 text-sm md:text-base
+    bg-white dark:bg-gray-800 
+    border border-gray-600 dark:border-gray-600
+    rounded-md
+    placeholder-gray-500 dark:placeholder-gray-500
+    focus:outline-none focus:border-gray-400 dark:focus:border-gray-500
+    hover:border-gray-400 dark:hover:border-gray-100
+    transition-colors duration-200;
   }
 }

@@ -10,8 +10,9 @@ const isPublicRoute = createRouteMatcher([
   '/api/checkout(.*)',
   '/api/stripe-webhook(.*)',
   '/api/check-subscription(.*)',
-  '/create-profile(.*)', // Add this line
-  '/api/create-profile(.*)', // And this line
+  '/create-profile(.*)',
+  '/api/create-profile(.*)',
+  '/api/openai/(.*)',
 ])
 
 // 2. Define a route group for Meal Plan. We want to check subscription

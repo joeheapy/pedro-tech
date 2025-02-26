@@ -31,7 +31,7 @@ export default function HomePage() {
             How it works
           </h2>
           <p className="mt-2 text-xl text-muted-foreground">
-            Follow these simple steps to get your personalized meal plan
+            Starting design your service.
           </p>
         </div>
 
@@ -57,10 +57,10 @@ export default function HomePage() {
               </svg>
             </div>
             <h3 className="text-xl font-medium mb-2 text-foreground">
-              Create an Account
+              One cool thing
             </h3>
             <p className="text-center text-xl text-muted-foreground max-w-sm">
-              Sign up or sign in to access your personalized meal plans.
+              This will explain a cool thing.
             </p>
           </div>
 
@@ -90,11 +90,10 @@ export default function HomePage() {
               </svg>
             </div>
             <h3 className="text-xl font-medium mb-2 text-foreground">
-              Set Your Preferences
+              Another cool thing
             </h3>
             <p className="text-center text-xl text-muted-foreground">
-              Input your dietary preferences and goals to tailor your meal
-              plans.
+              This will explain another cool thing.
             </p>
           </div>
 
@@ -118,10 +117,10 @@ export default function HomePage() {
               </svg>
             </div>
             <h3 className="text-xl font-medium mb-2 text-foreground">
-              Receive Your Meal Plan
+              One more cool thing
             </h3>
             <p className="text-center text-xl text-muted-foreground">
-              Get your customized meal plan delivered weekly to your account.
+              Here is another cool thing.
             </p>
           </div>
         </div>

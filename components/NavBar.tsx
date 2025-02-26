@@ -35,7 +35,7 @@ export default function NavBar() {
               href="/mealplan"
               className="text-foreground hover-text-primary font-medium"
             >
-              Mealplan
+              Service Story Maker
             </Link>
             {/* Profile Picture */}
             {user?.imageUrl ? (
