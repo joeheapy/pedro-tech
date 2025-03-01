@@ -17,7 +17,7 @@ import {
 } from '@/app/lib/types'
 import { useTokens } from '@/app/utils/useTokens'
 
-export default function MealPlanDashboard(): JSX.Element {
+export default function ServiceStoryMakerDashboard(): JSX.Element {
   const { Tokens, deductTokens, resetTokens } = useTokens()
   const [journeySteps, setJourneySteps] = useState<JourneyStep[]>([])
   const [customerPains, setCustomerPains] = useState<CustomerPainPointData[]>(

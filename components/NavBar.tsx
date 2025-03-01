@@ -32,7 +32,7 @@ export default function NavBar() {
           <ThemeToggle />
           <SignedIn>
             <Link
-              href="/mealplan"
+              href="/servicestorymaker"
               className="text-foreground hover-text-primary font-medium"
             >
               Service Story Maker

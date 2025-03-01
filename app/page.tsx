@@ -17,7 +17,7 @@ export default function HomePage() {
           A simple tool for people-centred service design with AI.
         </p>
         <Link
-          href="/mealplan"
+          href="/servicestorymaker"
           className="inline-block text-2xl px-6 py-4 bg-primary text-primary-foreground rounded-md hover-primary font-semibold"
         >
           Get Started

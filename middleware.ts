@@ -19,7 +19,7 @@ const isPublicRoute = createRouteMatcher([
 
 // 2. Define routes that require an active subscription
 const requiresSubscriptionRoute = createRouteMatcher([
-  '/mealplan(.*)',
+  '/servicestorymaker(.*)',
   '/profile(.*)', // Added profile routes to subscription-protected routes
 ])
 
@@ -57,7 +57,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next()
   }
 
-  // Check subscription for routes that require it (mealplan and profile)
+  // Check subscription for routes that require it (servicestorymaker and profile)
   if (userId && requiresSubscriptionRoute(req)) {
     try {
       // First check if profile exists
@@ -113,7 +113,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (
     userId &&
     pathname === '/' &&
-    !req.headers.get('referer')?.includes('/mealplan')
+    !req.headers.get('referer')?.includes('/servicestorymaker')
   ) {
     try {
       // Check if user has a profile in Prisma
@@ -145,10 +145,12 @@ export default clerkMiddleware(async (auth, req) => {
       if (checkSubRes.ok) {
         const data = await checkSubRes.json()
 
-        // If subscription active, redirect to mealplan
+        // If subscription active, redirect to servicestorymaker
         if (data.subscriptionActive) {
-          console.log('Active subscription found - redirecting to mealplan')
-          return NextResponse.redirect(new URL('/mealplan', origin))
+          console.log(
+            'Active subscription found - redirecting to servicestorymaker'
+          )
+          return NextResponse.redirect(new URL('/servicestorymaker', origin))
         }
 
         // Otherwise redirect to subscribe page

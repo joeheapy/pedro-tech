@@ -143,8 +143,7 @@ export default function Subscribe() {
           Pricing
         </h2>
         <p className="max-w-3xl mx-auto mt-4 text-xl text-center text-muted-foreground">
-          Get started on our weekly plan or upgrade to monthly or yearly when
-          you are ready.
+          Get started.
         </p>
       </div>
 
