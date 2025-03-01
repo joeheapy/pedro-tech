@@ -40,7 +40,7 @@ export function PersonaForm({
           type="submit"
           onClick={onGenerate}
           disabled={loading || disabled}
-          className={`hover:opacity-70 transition-opacity ${
+          className={`bg-foreground  dark:text-background hover:opacity-70 transition-opacity ${
             disabled ? 'opacity-60' : ''
           }`}
         >

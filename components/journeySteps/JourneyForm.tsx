@@ -132,7 +132,7 @@ export function JourneyForm({ onSubmit, isLoading }: JourneyFormProps) {
           <Button
             type="submit"
             disabled={isLoading}
-            className="hover:opacity-70 transition-opacity"
+            className="bg-foreground  dark:text-background  hover:opacity-70 transition-opacity"
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Saving you time...' : 'Create Service Story'}

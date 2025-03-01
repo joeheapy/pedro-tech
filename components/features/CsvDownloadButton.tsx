@@ -44,9 +44,9 @@ export function CsvDownloadButton({ features }: CsvDownloadButtonProps) {
       onClick={handleDownload}
       variant="default"
       size="lg"
-      className="gap-2"
+      className="bg-foreground text-background gap-2"
     >
-      <Download className="h-4 w-4" />
+      <Download className="text-background h-4 w-4" />
       Export Concept Features to CSV
     </Button>
   )

@@ -91,13 +91,12 @@ const handleCheckoutSessionCompleted = async (
       },
     })
     console.log(`Subscription activated for user: ${userId}`)
-} catch (error: unknown) {
-  if (error instanceof Error) {
-    console.error('Prisma Update Error:', error.message)
-    throw error // Add this line
-  } else {
-    console.error('Prisma Update Error:', error)
-    throw new Error('Unknown Prisma error') // Add this line
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Prisma Update Error:', error.message)
+    } else {
+      console.error('Prisma Update Error:', error)
+    }
   }
 }
 

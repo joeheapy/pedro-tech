@@ -71,8 +71,13 @@ export function CsvDownloadButton({
   }
 
   return (
-    <Button onClick={handleDownload} variant="default" size="lg">
-      <Download className="mr-2 h-4 w-4" />
+    <Button
+      onClick={handleDownload}
+      variant="default"
+      size="lg"
+      className="bg-foreground text-background gap-2"
+    >
+      <Download className="text-background h-4 w-4" />
       Download Pain Points CSV
     </Button>
   )

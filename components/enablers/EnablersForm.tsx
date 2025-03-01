@@ -52,7 +52,7 @@ export function EnablerForm({
           type="submit"
           onClick={onGenerate}
           disabled={loading || isDisabled}
-          className={`hover:opacity-70 transition-opacity ${
+          className={`bg-foreground  dark:text-background hover:opacity-70 transition-opacity ${
             isDisabled ? 'opacity-60' : ''
           }`}
         >
