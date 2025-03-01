@@ -60,9 +60,35 @@ export default function Subscribe() {
       window.history.replaceState({}, '', newUrl)
 
       if (error === 'subscription-required') {
-        toast.error('You need an active subscription to access this page')
+        // More friendly message with guidance
+        toast(
+          'This feature requires an active subscription. Choose a plan to continue.',
+          {
+            icon: '🔐',
+            duration: 5000,
+            style: {
+              border: '1px solid #7c3aed',
+              padding: '16px',
+              color: '#1f2937',
+              background: '#f5f3ff',
+            },
+          }
+        )
       } else if (error === 'subscription-check-failed') {
-        toast.error('Unable to verify subscription status. Please try again.')
+        // More helpful error message
+        toast(
+          "We couldn't verify your subscription status. Please refresh or contact support if the problem persists.",
+          {
+            icon: '⚠️',
+            duration: 5000,
+            style: {
+              border: '1px solid #f59e0b',
+              padding: '16px',
+              color: '#1f2937',
+              background: '#fef3c7',
+            },
+          }
+        )
       }
     }
   }, [searchParams])

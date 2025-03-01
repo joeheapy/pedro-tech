@@ -6,23 +6,25 @@ import { NextResponse } from 'next/server'
 const isPublicRoute = createRouteMatcher([
   '/',
   '/sign-up(.*)',
+  '/sign-in(.*)',
   '/subscribe(.*)',
   '/api/checkout(.*)',
   '/api/stripe-webhook(.*)',
   '/api/check-subscription(.*)',
   '/create-profile(.*)',
   '/api/create-profile(.*)',
+  '/api/check-profile(.*)',
   '/api/openai/(.*)',
 ])
 
-// 2. Define a route group for Meal Plan. We want to check subscription
-const isMealPlanRoute = createRouteMatcher(['/mealplan(.*)'])
+// 2. Define routes that require an active subscription
+const requiresSubscriptionRoute = createRouteMatcher([
+  '/mealplan(.*)',
+  '/profile(.*)', // Added profile routes to subscription-protected routes
+])
 
-// 3. Define a route group for Profile Routes (Protected but may not require subscription)
-const isProfileRoute = createRouteMatcher(['/profile(.*)'])
-
+// Sign-up route matcher - used to prevent redirects during sign-up flow
 const isSignUpRoute = createRouteMatcher(['/sign-up(.*)'])
-// const isSignInRoute = createRouteMatcher(['/sign-in(.*)'])
 
 // Clerk's middleware
 export default clerkMiddleware(async (auth, req) => {
@@ -42,83 +44,128 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL('/sign-up', origin))
   }
 
+  // IMPORTANT: Allow create-profile route to function properly
+  if (pathname === '/create-profile' && userId) {
+    console.log('Allowing access to create-profile route')
+    return NextResponse.next()
+  }
+
+  // Don't redirect from sign-up if user is already signed in
+  // Let Clerk handle the redirect to create-profile
   if (userId && isSignUpRoute(req)) {
-    return NextResponse.redirect(new URL('/create-profile', origin))
+    console.log('User already signed in on sign-up route')
+    return NextResponse.next()
   }
 
-  if (
-    userId &&
-    (isSignUpRoute(req) ||
-      (pathname === '/' && !req.headers.get('referer')?.includes('/mealplan')))
-  ) {
+  // Check subscription for routes that require it (mealplan and profile)
+  if (userId && requiresSubscriptionRoute(req)) {
     try {
-      console.log('Checking subscription for user:', userId)
-      const checkSubRes = await fetch(
-        `${origin}/api/check-subscription?userId=${userId}`,
+      // First check if profile exists
+      const profileCheck = await fetch(
+        `${origin}/api/check-profile?userId=${userId}`,
         {
           method: 'GET',
-          headers: {
-            cookie: req.headers.get('cookie') || '',
-          },
+          headers: { cookie: req.headers.get('cookie') || '' },
         }
       )
 
-      if (checkSubRes.ok) {
-        const data = await checkSubRes.json()
-        console.log('Subscription check response:', data)
+      const profileData = await profileCheck.json()
 
-        // If user has active subscription, redirect to mealplan only if not already there
-        if (data.subscriptionActive && !isMealPlanRoute(req)) {
-          console.log('Active subscription found - redirecting to mealplan')
-          return NextResponse.redirect(new URL('/mealplan', origin))
-        }
+      // If no profile exists, redirect to create-profile
+      if (!profileData.exists) {
+        console.log('No profile found - redirecting to create-profile')
+        return NextResponse.redirect(new URL('/create-profile', origin))
       }
-    } catch (error) {
-      console.error('Subscription check failed:', error)
-    }
 
-    // Only redirect to subscribe if coming from sign-up route
-    if (isSignUpRoute(req)) {
-      return NextResponse.redirect(new URL('/subscribe', origin))
-    }
-  }
-
-  // Protect mealplan and profile routes
-  if ((isMealPlanRoute(req) || isProfileRoute(req)) && userId) {
-    try {
+      // Then check subscription
       const checkSubRes = await fetch(
         `${origin}/api/check-subscription?userId=${userId}`,
         {
           method: 'GET',
-          headers: {
-            cookie: req.headers.get('cookie') || '',
-          },
+          headers: { cookie: req.headers.get('cookie') || '' },
         }
       )
 
-      if (!checkSubRes.ok || !(await checkSubRes.json()).subscriptionActive) {
-        // Redirect with a searchParam that can be used to show the toast
+      if (!checkSubRes.ok) {
+        console.log('Subscription check failed')
+        return NextResponse.redirect(
+          new URL('/subscribe?error=subscription-check-failed', origin)
+        )
+      }
+
+      const data = await checkSubRes.json()
+
+      if (!data.subscriptionActive) {
+        console.log('No active subscription - redirecting to subscribe')
         return NextResponse.redirect(
           new URL('/subscribe?error=subscription-required', origin)
         )
       }
     } catch (error) {
-      console.error('Error checking subscription:', error)
+      console.error('Subscription or profile check failed:', error)
       return NextResponse.redirect(
         new URL('/subscribe?error=subscription-check-failed', origin)
       )
     }
   }
 
+  // Handle home page redirect for authenticated users
+  if (
+    userId &&
+    pathname === '/' &&
+    !req.headers.get('referer')?.includes('/mealplan')
+  ) {
+    try {
+      // Check if user has a profile in Prisma
+      const profileCheck = await fetch(
+        `${origin}/api/check-profile?userId=${userId}`,
+        {
+          method: 'GET',
+          headers: { cookie: req.headers.get('cookie') || '' },
+        }
+      )
+
+      const profileData = await profileCheck.json()
+
+      // If no profile exists, redirect to create-profile
+      if (!profileData.exists) {
+        console.log('No profile found - redirecting to create-profile')
+        return NextResponse.redirect(new URL('/create-profile', origin))
+      }
+
+      // Check if user has an active subscription
+      const checkSubRes = await fetch(
+        `${origin}/api/check-subscription?userId=${userId}`,
+        {
+          method: 'GET',
+          headers: { cookie: req.headers.get('cookie') || '' },
+        }
+      )
+
+      if (checkSubRes.ok) {
+        const data = await checkSubRes.json()
+
+        // If subscription active, redirect to mealplan
+        if (data.subscriptionActive) {
+          console.log('Active subscription found - redirecting to mealplan')
+          return NextResponse.redirect(new URL('/mealplan', origin))
+        }
+
+        // Otherwise redirect to subscribe page
+        return NextResponse.redirect(new URL('/subscribe', origin))
+      }
+    } catch (error) {
+      console.error('Subscription/profile check failed:', error)
+    }
+  }
+
   return NextResponse.next()
 })
 
-// 4. Next.js route matching config
+// Next.js route matching config
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
     '/(api|trpc)(.*)',
   ],
 }

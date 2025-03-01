@@ -9,10 +9,10 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
-  // console.log('Received webhook body:', body)
+  console.log('Received webhook body:', body)
 
   const signature = req.headers.get('stripe-signature')
-  // console.log('Stripe signature:', signature)
+  console.log('Stripe signature:', signature)
 
   let event: Stripe.Event
 
@@ -91,12 +91,13 @@ const handleCheckoutSessionCompleted = async (
       },
     })
     console.log(`Subscription activated for user: ${userId}`)
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Prisma Update Error:', error.message)
-    } else {
-      console.error('Prisma Update Error:', error)
-    }
+} catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error('Prisma Update Error:', error.message)
+    throw error // Add this line
+  } else {
+    console.error('Prisma Update Error:', error)
+    throw new Error('Unknown Prisma error') // Add this line
   }
 }
 

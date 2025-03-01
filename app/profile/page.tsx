@@ -187,7 +187,7 @@ export default function ProfilePage() {
 
   // Main Profile Page UI
   return (
-    <div className="min-h-screen flex items-start justify-center p-8 sm:pt-16 lg:pt-24 bg-background">
+    <div className="min-h-screen flex items-start justify-center p-8 sm:pt-16 lg:pt-24 ">
       <Toaster position="top-center" />
       <div className="w-full max-w-5xl bg-card shadow-md rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
