@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/sign-in(.*)',
   '/subscribe(.*)',
+  '/servicestorymaker(.*)',
   '/api/checkout(.*)',
   '/api/stripe-webhook(.*)',
   '/api/check-subscription(.*)',
@@ -19,7 +20,7 @@ const isPublicRoute = createRouteMatcher([
 
 // 2. Define routes that require an active subscription
 const requiresSubscriptionRoute = createRouteMatcher([
-  '/servicestorymaker(.*)',
+  // '/servicestorymaker(.*)',
   '/profile(.*)', // Added profile routes to subscription-protected routes
 ])
 
@@ -55,6 +56,47 @@ export default clerkMiddleware(async (auth, req) => {
   if (userId && isSignUpRoute(req)) {
     console.log('User already signed in on sign-up route')
     return NextResponse.next()
+  }
+
+  // Redirect subscribed users away from subscribe page
+  if (userId && pathname === '/subscribe') {
+    try {
+      // First check if profile exists
+      const profileCheck = await fetch(
+        `${origin}/api/check-profile?userId=${userId}`,
+        {
+          method: 'GET',
+          headers: { cookie: req.headers.get('cookie') || '' },
+        }
+      )
+
+      const profileData = await profileCheck.json()
+
+      // Only proceed if they have a profile
+      if (profileData.exists) {
+        // Check if user has an active subscription
+        const checkSubRes = await fetch(
+          `${origin}/api/check-subscription?userId=${userId}`,
+          {
+            method: 'GET',
+            headers: { cookie: req.headers.get('cookie') || '' },
+          }
+        )
+
+        if (checkSubRes.ok) {
+          const data = await checkSubRes.json()
+
+          // If user already has active subscription, redirect to profile
+          if (data.subscriptionActive) {
+            console.log('User already subscribed - redirecting to profile')
+            return NextResponse.redirect(new URL('/profile', origin))
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking subscription status:', error)
+      // Continue to subscription page on error
+    }
   }
 
   // Check subscription for routes that require it (servicestorymaker and profile)

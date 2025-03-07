@@ -8,6 +8,7 @@ import { PersonasContainer } from '@/components/personas/PersonasContainer'
 import { FeaturesContainer } from '@/components/features/FeaturesContainer'
 import { EnablersContainer } from '@/components/enablers/EnablersContainer'
 import { TokenControls } from '@/components/ui/tokenControls'
+import { useSubscription } from '@/app/hooks/useSubscription'
 import {
   JourneyStep,
   CustomerPainPointData,
@@ -16,9 +17,12 @@ import {
   TARIFFS,
 } from '@/app/lib/types'
 import { useTokens } from '@/app/utils/useTokens'
+import { Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function ServiceStoryMakerDashboard(): JSX.Element {
   const { Tokens, deductTokens, resetTokens } = useTokens()
+  const { isSubscribed, isLoading, redirectToSubscribe } = useSubscription()
   const [journeySteps, setJourneySteps] = useState<JourneyStep[]>([])
   const [customerPains, setCustomerPains] = useState<CustomerPainPointData[]>(
     []
@@ -86,6 +90,24 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading...</span>
+      </div>
+    )
+  }
+  // This function renders an empty card for each placeholder card.
+  const renderPlaceholderCards = (count: number) => {
+    return Array.from({ length: count }).map((_, index) => (
+      <div
+        key={`placeholder-${index}`}
+        className="rounded-lg border-dashed border-8 muted-foreground h-[188px] w-full mb-8"
+      />
+    ))
+  }
+
   return (
     <>
       <TokenControls
@@ -95,41 +117,69 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
       />
       <main className="min-h-screen">
         <div className="container mx-auto space-y-8 py-8">
+          {/* Journey container is accessible to everyone */}
           <JourneyContainer
             journeySteps={journeySteps}
             onJourneyGenerated={handleJourneyGenerated}
           />
-          <PersonasContainer
-            journeySteps={journeySteps}
-            onPersonasGenerated={handlePersonasGenerated}
-          />
-          <CustomerPainsContainer
-            journeySteps={journeySteps}
-            onCustomerPainPointsGenerated={handleCustomerPainPointsGenerated}
-          />
 
-          <BusinessPainsContainer
-            journeySteps={journeySteps}
-            onBusinessPainPointsGenerated={handleBusinessPainPointsGenerated}
-          />
-          <FeaturesContainer
-            journeySteps={journeySteps}
-            customerPains={customerPains}
-            businessPains={businessPains}
-            personaData={personaData} // Pass stored personas
-            onFeaturesGenerated={() =>
-              handleFeaturesGenerated(TARIFFS.features)
-            }
-          />
-          <EnablersContainer
-            journeySteps={journeySteps}
-            customerPains={customerPains}
-            businessPains={businessPains}
-            personaData={personaData} // Pass stored personas
-            onEnablersGenerated={() =>
-              handleEnablersGenerated(TARIFFS.features)
-            }
-          />
+          {/* Protected components */}
+          {isSubscribed ? (
+            <>
+              <PersonasContainer
+                journeySteps={journeySteps}
+                onPersonasGenerated={handlePersonasGenerated}
+              />
+              <CustomerPainsContainer
+                journeySteps={journeySteps}
+                onCustomerPainPointsGenerated={
+                  handleCustomerPainPointsGenerated
+                }
+              />
+              <BusinessPainsContainer
+                journeySteps={journeySteps}
+                onBusinessPainPointsGenerated={
+                  handleBusinessPainPointsGenerated
+                }
+              />
+              <FeaturesContainer
+                journeySteps={journeySteps}
+                customerPains={customerPains}
+                businessPains={businessPains}
+                personaData={personaData}
+                onFeaturesGenerated={() =>
+                  handleFeaturesGenerated(TARIFFS.features)
+                }
+              />
+              <EnablersContainer
+                journeySteps={journeySteps}
+                customerPains={customerPains}
+                businessPains={businessPains}
+                personaData={personaData}
+                onEnablersGenerated={() =>
+                  handleEnablersGenerated(TARIFFS.features)
+                }
+              />
+            </>
+          ) : (
+            <div>
+              <div className="bg-card rounded-lg border-2 border-primary p-8 shadow-sm my-8">
+                <h2 className="text-2xl font-semibold mb-4">
+                  Upgrade your access
+                </h2>
+                <p className="text-foreground mb-6">
+                  Generate your service journey for free above. To access
+                  advanced features like personas, customer and business pain
+                  point generation, and service feature generation, you will
+                  need to subscribe to a paid plan.
+                </p>
+                <Button onClick={redirectToSubscribe} className="px-6">
+                  Subscribe Now
+                </Button>
+              </div>
+              {renderPlaceholderCards(5)}
+            </div>
+          )}
         </div>
       </main>
     </>

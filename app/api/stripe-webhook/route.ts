@@ -65,7 +65,12 @@ const handleCheckoutSessionCompleted = async (
   session: Stripe.Checkout.Session
 ) => {
   const userId = session.metadata?.clerkUserId
-  console.log('Handling checkout.session.completed for user:', userId)
+  console.log(
+    'Handling checkout.session.completed for user:',
+    userId,
+    'full metadata:',
+    session.metadata
+  )
 
   if (!userId) {
     console.error('No userId found in session metadata.')
@@ -80,9 +85,31 @@ const handleCheckoutSessionCompleted = async (
     return
   }
 
-  // Update Prisma with subscription details
+  // Check if profile exists first
   try {
-    await prisma.profile.update({
+    const existingProfile = await prisma.profile.findUnique({
+      where: { userId },
+    })
+
+    if (!existingProfile) {
+      console.log(`No profile found for userId: ${userId}, creating one now`)
+
+      // Create the profile if it doesn't exist
+      await prisma.profile.create({
+        data: {
+          userId,
+          email: session.customer_email || '',
+          stripeSubscriptionId: subscriptionId,
+          subscriptionActive: true,
+          subscriptionTier: session.metadata?.planType || null,
+        },
+      })
+      console.log(`Created new profile with subscription for user: ${userId}`)
+      return
+    }
+
+    // Update existing profile
+    const updatedProfile = await prisma.profile.update({
       where: { userId },
       data: {
         stripeSubscriptionId: subscriptionId,
@@ -90,12 +117,14 @@ const handleCheckoutSessionCompleted = async (
         subscriptionTier: session.metadata?.planType || null,
       },
     })
-    console.log(`Subscription activated for user: ${userId}`)
+    console.log(`Subscription activated for user: ${userId}`, updatedProfile)
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error('Prisma Update Error:', error.message)
+      console.error('Prisma Error:', error.message)
+      throw error // Re-throw to trigger error handling in main webhook handler
     } else {
-      console.error('Prisma Update Error:', error)
+      console.error('Unknown Prisma Error:', String(error))
+      throw new Error('Failed to update subscription status')
     }
   }
 }

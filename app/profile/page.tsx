@@ -226,6 +226,10 @@ export default function ProfilePage() {
                   <h3 className="text-xl font-semibold mb-2 text-primary">
                     Current plan
                   </h3>
+
+                  {/* Add separator here */}
+                  <hr className="h-px my-2 mb-6 bg-background" />
+
                   {subscription?.subscription ? (
                     <>
                       <p className="text-foreground mb-2">
@@ -264,6 +268,7 @@ export default function ProfilePage() {
                   <h3 className="text-xl font-semibold mb-2 text-primary">
                     Change subscription plan
                   </h3>
+                  <hr className="h-px my-2 mb-6 bg-background" />
                   <select
                     onChange={handleChangePlan}
                     defaultValue={currentPlan?.interval}
@@ -281,7 +286,7 @@ export default function ProfilePage() {
                   </select>
                   <button
                     onClick={handleConfirmChangePlan}
-                    className="mt-3 p-2 bg-primary text-lg font-semibold text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                    className="w-full mt-6 p-2 bg-primary mb-6 text-lg font-semibold text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
                   >
                     Save Change
                   </button>
@@ -292,6 +297,7 @@ export default function ProfilePage() {
                   <h3 className="text-xl font-semibold mb-2 text-primary">
                     Cancel subscription
                   </h3>
+                  <hr className="h-px my-2 mb-6 bg-background" />
                   <button
                     onClick={handleUnsubscribe}
                     disabled={unsubscribeMutation.isPending}

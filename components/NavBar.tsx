@@ -1,5 +1,3 @@
-// app/components/NavBar.js
-
 'use client'
 
 import Link from 'next/link'
@@ -7,9 +5,12 @@ import Image from 'next/image'
 import { useUser, SignedIn, SignedOut, SignOutButton } from '@clerk/nextjs'
 import { ThemeToggle } from './theme/ThemeToggle'
 import { BookOpenText } from 'lucide-react'
+import { useSubscription } from '@/app/hooks/useSubscription'
+// import { useState, useEffect } from 'react'
 
 export default function NavBar() {
-  const { isLoaded, isSignedIn, user } = useUser()
+  const { isLoaded, user } = useUser()
+  const { isSubscribed, isLoading } = useSubscription()
 
   if (!isLoaded) {
     // Optionally, return a loading indicator or skeleton here
@@ -29,7 +30,6 @@ export default function NavBar() {
 
         {/* Navigation Links */}
         <div className="space-x-6 flex items-center">
-          <ThemeToggle />
           <SignedIn>
             <Link
               href="/servicestorymaker"
@@ -37,6 +37,17 @@ export default function NavBar() {
             >
               Service Story Maker
             </Link>
+
+            {/* Only show pricing link if NOT subscribed */}
+            {!isLoading && !isSubscribed && (
+              <Link
+                href="/subscribe"
+                className="text-foreground hover:text-primary font-medium"
+              >
+                Pricing
+              </Link>
+            )}
+            <ThemeToggle />
             {/* Profile Picture */}
             {user?.imageUrl ? (
               <Link
@@ -71,11 +82,12 @@ export default function NavBar() {
               Home
             </Link>
             <Link
-              href={isSignedIn ? '/subscribe' : '/sign-up'}
+              href="/sign-up"
               className="text-foreground hover-text-primary font-medium"
             >
               Pricing
             </Link>
+            <ThemeToggle />
             <Link
               href="/sign-up"
               className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover-primary font-semibold"
