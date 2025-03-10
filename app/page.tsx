@@ -10,12 +10,12 @@ export default function HomePage() {
     <div className="px-4 py-10 sm:py-12 lg:py-16 max-w-7xl mx-auto">
       {/* Hero Section */}
       <section className="rounded-lg sm:mt-4 md:mt-10 mb-12 p-8 text-center">
-        <h1 className="text-7xl font-bold mb-6 text-foreground">
-          Write your service story
+        <h1 className="text-7xl font-bold mb-20 text-foreground">
+          A simple tool for people-centred service design with AI
         </h1>
-        <p className="text-2xl mb-12 text-foreground/80">
+        {/* <p className="text-2xl mb-12 text-foreground/80">
           A simple tool for people-centred service design with AI.
-        </p>
+        </p> */}
         <Link
           href="/servicestorymaker"
           className="inline-block text-2xl px-6 py-4 bg-primary text-primary-foreground rounded-md hover-primary font-semibold"
@@ -27,12 +27,12 @@ export default function HomePage() {
       {/* How It Works Section */}
       <section id="how-it-works" className="container mx-auto mb-12 px-4">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-semibold text-foreground">
+          {/* <h2 className="text-3xl font-semibold text-foreground">
             How it works
           </h2>
           <p className="mt-2 text-xl text-muted-foreground">
             Starting design your service.
-          </p>
+          </p> */}
         </div>
 
         {/* Steps */}

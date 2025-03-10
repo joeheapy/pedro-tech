@@ -8,7 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/sign-in(.*)',
   '/subscribe(.*)',
-  '/servicestorymaker(.*)',
+  // '/servicestorymaker(.*)',
   '/api/checkout(.*)',
   '/api/stripe-webhook(.*)',
   '/api/check-subscription(.*)',

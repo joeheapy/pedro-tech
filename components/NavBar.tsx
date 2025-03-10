@@ -38,6 +38,13 @@ export default function NavBar() {
               Service Story Maker
             </Link>
 
+            <Link
+              href="/projects"
+              className="text-foreground hover-text-primary font-medium"
+            >
+              Projects
+            </Link>
+
             {/* Only show pricing link if NOT subscribed */}
             {!isLoading && !isSubscribed && (
               <Link
