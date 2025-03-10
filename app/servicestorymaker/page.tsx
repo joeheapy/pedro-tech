@@ -18,7 +18,8 @@ import {
 } from '@/app/lib/types'
 import { useTokens } from '@/app/utils/useTokens'
 import { Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import CreateProject from '@/components/createProject'
+import UpgradeYourAccess from '@/components/upgradeYourAccess'
 
 export default function ServiceStoryMakerDashboard(): JSX.Element {
   const { Tokens, deductTokens, resetTokens } = useTokens()
@@ -98,32 +99,28 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
       </div>
     )
   }
-  // This function renders an empty card for each placeholder card.
-  const renderPlaceholderCards = (count: number) => {
-    return Array.from({ length: count }).map((_, index) => (
-      <div
-        key={`placeholder-${index}`}
-        className="rounded-lg border-dashed border-8 muted-foreground h-[188px] w-full mb-8"
-      />
-    ))
-  }
 
   return (
     <>
-      <TokenControls
-        Tokens={Tokens.balance}
-        error={Tokens.error}
-        onReset={resetTokens}
-      />
+      <div className="sr-only">
+        <TokenControls
+          Tokens={Tokens.balance}
+          error={Tokens.error}
+          onReset={resetTokens}
+        />
+      </div>
       <main className="min-h-screen">
         <div className="container mx-auto space-y-8 py-8">
+          {/* First conditional - only show CreateProject if subscribed */}
+          {isSubscribed ? <CreateProject /> : null}
+
           {/* Journey container is accessible to everyone */}
           <JourneyContainer
             journeySteps={journeySteps}
             onJourneyGenerated={handleJourneyGenerated}
           />
 
-          {/* Protected components */}
+          {/* Protected components or upgrade prompt */}
           {isSubscribed ? (
             <>
               <PersonasContainer
@@ -162,23 +159,7 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
               />
             </>
           ) : (
-            <div>
-              <div className="bg-card rounded-lg border-2 border-primary p-8 shadow-sm my-8">
-                <h2 className="text-2xl font-semibold mb-4">
-                  Upgrade your access
-                </h2>
-                <p className="text-foreground mb-6">
-                  Generate your service journey for free above. To access
-                  advanced features like personas, customer and business pain
-                  point generation, and service feature generation, you will
-                  need to subscribe to a paid plan.
-                </p>
-                <Button onClick={redirectToSubscribe} className="px-6">
-                  Subscribe Now
-                </Button>
-              </div>
-              {renderPlaceholderCards(5)}
-            </div>
+            <UpgradeYourAccess redirectToSubscribe={redirectToSubscribe} />
           )}
         </div>
       </main>

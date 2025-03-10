@@ -21,7 +21,8 @@ const isPublicRoute = createRouteMatcher([
 // 2. Define routes that require an active subscription
 const requiresSubscriptionRoute = createRouteMatcher([
   // '/servicestorymaker(.*)',
-  '/profile(.*)', // Added profile routes to subscription-protected routes
+  '/profile(.*)',
+  '/projects(.*)', // Added profile routes to subscription-protected routes
 ])
 
 // Sign-up route matcher - used to prevent redirects during sign-up flow
@@ -99,7 +100,7 @@ export default clerkMiddleware(async (auth, req) => {
     }
   }
 
-  // Check subscription for routes that require it (servicestorymaker and profile)
+  // Check subscription for routes that require it (servicestorymaker, projects and profile)
   if (userId && requiresSubscriptionRoute(req)) {
     try {
       // First check if profile exists
