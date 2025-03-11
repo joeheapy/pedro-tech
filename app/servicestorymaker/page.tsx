@@ -18,7 +18,7 @@ import {
 } from '@/app/lib/types'
 import { useTokens } from '@/app/utils/useTokens'
 import { Loader2 } from 'lucide-react'
-import CreateProject from '@/components/createProject'
+// import CreateProject from '@/components/createProject'
 import UpgradeYourAccess from '@/components/upgradeYourAccess'
 
 export default function ServiceStoryMakerDashboard(): JSX.Element {
@@ -112,7 +112,7 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
       <main className="min-h-screen">
         <div className="container mx-auto space-y-8 py-8">
           {/* First conditional - only show CreateProject if subscribed */}
-          {isSubscribed ? <CreateProject /> : null}
+          {/* {isSubscribed ? <CreateProject /> : null} */}
 
           {/* Journey container is accessible to everyone */}
           <JourneyContainer

@@ -46,7 +46,7 @@ export default function CreateProject({
 
   const projectTitleMaxLength = 80
   const projectDescriptionMaxLength = 150
-  const minCharacters = 10
+  const minCharacters = 5
 
   const isTitleValid = title.trim().length >= minCharacters
   const isDescriptionValid =
@@ -96,10 +96,10 @@ export default function CreateProject({
     return (
       <Card className="mb-6 w-full">
         <CardHeader>
-          <CardTitle className="text-xl">Create New Project</CardTitle>
-          <CardDescription>
+          {/* <CardTitle className="text-xl">Create New Project</CardTitle> */}
+          {/* <CardDescription>
             Enter the details of your new service design project
-          </CardDescription>
+          </CardDescription> */}
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -110,7 +110,7 @@ export default function CreateProject({
             </Label>
             <Input
               id="project-title"
-              placeholder="Enter project title (min. 10 characters)..."
+              placeholder="Meals on Wheels"
               value={title}
               onChange={handleTitleChange}
               maxLength={projectTitleMaxLength}
@@ -138,7 +138,7 @@ export default function CreateProject({
             <Label htmlFor="project-description">Description (optional)</Label>
             <Textarea
               id="project-description"
-              placeholder="Enter a brief description of your project (min. 10 characters if provided)..."
+              placeholder="Meals on Wheels service delivers nutritious meals to homebound individuals."
               className={`resize-none ${
                 description && !isDescriptionValid ? 'border-destructive' : ''
               }`}
