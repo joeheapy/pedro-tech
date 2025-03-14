@@ -41,20 +41,6 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <div className="bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
               {/* Icon for Step 1 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14v7m-3-3h6"
-                />
-              </svg>
             </div>
             <h3 className="text-xl font-medium mb-2 text-foreground">
               One cool thing
@@ -68,26 +54,6 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <div className="bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
               {/* Icon for Step 2 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6"
-                />
-              </svg>
             </div>
             <h3 className="text-xl font-medium mb-2 text-foreground">
               Another cool thing
@@ -101,20 +67,6 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <div className="bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
               {/* Icon for Step 3 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
             </div>
             <h3 className="text-xl font-medium mb-2 text-foreground">
               One more cool thing

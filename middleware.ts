@@ -90,7 +90,7 @@ export default clerkMiddleware(async (auth, req) => {
           // If user already has active subscription, redirect to profile
           if (data.subscriptionActive) {
             console.log('User already subscribed - redirecting to profile')
-            return NextResponse.redirect(new URL('/profile', origin))
+            return NextResponse.redirect(new URL('/projects', origin))
           }
         }
       }
@@ -193,7 +193,7 @@ export default clerkMiddleware(async (auth, req) => {
           console.log(
             'Active subscription found - redirecting to servicestorymaker'
           )
-          return NextResponse.redirect(new URL('/servicestorymaker', origin))
+          return NextResponse.redirect(new URL('/projects', origin))
         }
 
         // Otherwise redirect to subscribe page

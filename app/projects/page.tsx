@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import CreateProject from '@/components/createProject'
+import { toast } from 'react-hot-toast'
 
+// Interface for our client-side project with Date objects
 interface Project {
   id: string
   title: string
@@ -13,30 +15,107 @@ interface Project {
   updatedAt: Date
 }
 
+// Interface for API response with string dates
+interface ProjectDTO {
+  id: string
+  title: string
+  description: string
+  createdAt: string
+  updatedAt: string
+  profileId: string
+}
+
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  const handleSaveProject = (newProject: Project) => {
-    // Check if this project already exists and update it, or add as new
-    const existingIndex = projects.findIndex((p) => p.id === newProject.id)
+  // Fetch projects when component mounts
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const response = await fetch('/api/projects')
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects')
+        }
 
-    if (existingIndex >= 0) {
-      // Update existing project
-      const updatedProjects = [...projects]
-      updatedProjects[existingIndex] = newProject
-      setProjects(updatedProjects)
-    } else {
-      // Add new project
-      setProjects([...projects, newProject])
+        const data = await response.json()
+
+        // Convert API date strings to Date objects
+        const formattedProjects = data.projects.map((project: ProjectDTO) => ({
+          id: project.id,
+          title: project.title,
+          description: project.description,
+          createdAt: new Date(project.createdAt),
+          updatedAt: new Date(project.updatedAt),
+        }))
+
+        setProjects(formattedProjects)
+      } catch (error) {
+        console.error('Error loading projects:', error)
+        toast.error('Failed to load projects')
+      } finally {
+        setLoading(false)
+      }
     }
 
-    setShowCreateForm(false)
+    fetchProjects()
+  }, [])
+
+  const handleSaveProject = async (newProject: Project) => {
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: newProject.title,
+          description: newProject.description,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save project')
+      }
+
+      const savedProjectDTO = (await response.json()) as ProjectDTO
+
+      // Convert date strings to Date objects
+      const savedProject: Project = {
+        id: savedProjectDTO.id,
+        title: savedProjectDTO.title,
+        description: savedProjectDTO.description,
+        createdAt: new Date(savedProjectDTO.createdAt),
+        updatedAt: new Date(savedProjectDTO.updatedAt),
+      }
+
+      setProjects([...projects, savedProject])
+      setShowCreateForm(false)
+      toast.success('Project created successfully')
+    } catch (error) {
+      console.error('Error saving project:', error)
+      toast.error('Failed to create project')
+    }
   }
 
-  const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter((project) => project.id !== id))
+  const handleDeleteProject = async (id: string) => {
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete project')
+      }
+
+      setProjects(projects.filter((project) => project.id !== id))
+      toast.success('Project deleted successfully')
+    } catch (error) {
+      console.error('Error deleting project:', error)
+      toast.error('Failed to delete project')
+    }
   }
 
   const handleGoToProject = (id: string) => {
@@ -66,22 +145,34 @@ export default function ProjectsPage() {
           />
         )}
 
-        {/* List of projects */}
-        {projects.map((project) => (
-          <CreateProject
-            key={project.id}
-            initialMode="view"
-            project={project}
-            onDelete={handleDeleteProject}
-            onGoToProject={handleGoToProject}
-          />
-        ))}
+        {/* Loading state */}
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+            <span className="ml-3 text-muted-foreground">
+              Loading projects...
+            </span>
+          </div>
+        ) : (
+          <>
+            {/* List of projects */}
+            {projects.map((project) => (
+              <CreateProject
+                key={project.id}
+                initialMode="view"
+                project={project}
+                onDelete={handleDeleteProject}
+                onGoToProject={handleGoToProject}
+              />
+            ))}
 
-        {/* Empty state */}
-        {projects.length === 0 && !showCreateForm && (
-          <p className="text-center text-muted-foreground mt-4">
-            No projects to display. Click New Project to create one.
-          </p>
+            {/* Empty state */}
+            {projects.length === 0 && !showCreateForm && (
+              <p className="text-center text-muted-foreground mt-4">
+                No projects to display. Create a new project to get started.
+              </p>
+            )}
+          </>
         )}
       </div>
     </main>

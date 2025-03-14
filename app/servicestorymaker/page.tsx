@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, JSX } from 'react'
+import { useState, JSX, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { JourneyContainer } from '@/components/journeySteps/JourneyContainer'
 import { CustomerPainsContainer } from '@/components/customerPains/CustomerPainsContainer'
 import { BusinessPainsContainer } from '@/components/businessPains/BusinessPainsContainer'
@@ -17,13 +18,32 @@ import {
   TARIFFS,
 } from '@/app/lib/types'
 import { useTokens } from '@/app/utils/useTokens'
-import { Loader2 } from 'lucide-react'
-// import CreateProject from '@/components/createProject'
+import { Loader2, ArrowLeft } from 'lucide-react'
 import UpgradeYourAccess from '@/components/upgradeYourAccess'
+import { toast } from 'react-hot-toast'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+
+// Interface for project details
+interface Project {
+  id: string
+  title: string
+  description: string
+  createdAt: Date
+  updatedAt: Date
+}
 
 export default function ServiceStoryMakerDashboard(): JSX.Element {
   const { Tokens, deductTokens, resetTokens } = useTokens()
   const { isSubscribed, isLoading, redirectToSubscribe } = useSubscription()
+  const searchParams = useSearchParams()
+
   const [journeySteps, setJourneySteps] = useState<JourneyStep[]>([])
   const [customerPains, setCustomerPains] = useState<CustomerPainPointData[]>(
     []
@@ -32,6 +52,41 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
     []
   )
   const [personaData, setPersonaData] = useState<PersonaData[]>([])
+  const [currentProject, setCurrentProject] = useState<Project | null>(null)
+  const [loadingProject, setLoadingProject] = useState<boolean>(false)
+
+  // Get project ID from URL query parameters
+  const projectId = searchParams.get('projectId')
+
+  // Fetch project details if there's a project ID
+  useEffect(() => {
+    async function fetchProjectDetails() {
+      if (!projectId || !isSubscribed) return
+
+      try {
+        setLoadingProject(true)
+        const response = await fetch(`/api/projects/${projectId}`)
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch project details')
+        }
+
+        const projectData = await response.json()
+        setCurrentProject({
+          ...projectData,
+          createdAt: new Date(projectData.createdAt),
+          updatedAt: new Date(projectData.updatedAt),
+        })
+      } catch (error) {
+        console.error('Error fetching project:', error)
+        toast.error('Failed to load project details')
+      } finally {
+        setLoadingProject(false)
+      }
+    }
+
+    fetchProjectDetails()
+  }, [projectId, isSubscribed])
 
   const handleJourneyGenerated = (steps: JourneyStep[]): void => {
     try {
@@ -91,7 +146,7 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
     }
   }
 
-  if (isLoading) {
+  if (isLoading || (projectId && loadingProject)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -111,8 +166,32 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
       </div>
       <main className="min-h-screen">
         <div className="container mx-auto space-y-8 py-8">
-          {/* First conditional - only show CreateProject if subscribed */}
-          {/* {isSubscribed ? <CreateProject /> : null} */}
+          {/* Project details section for subscribed users */}
+          {isSubscribed && currentProject && (
+            <div className="mb-8">
+              <div className="flex items-center mb-4">
+                <Link href="/projects">
+                  <Button variant="ghost" size="sm" className="gap-1">
+                    <ArrowLeft size={16} />
+                    Back to Projects
+                  </Button>
+                </Link>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold">
+                    {currentProject.title}
+                  </CardTitle>
+                  {currentProject.description && (
+                    <CardDescription className="mt-2 text-base">
+                      {currentProject.description}
+                    </CardDescription>
+                  )}
+                </CardHeader>
+              </Card>
+            </div>
+          )}
 
           {/* Journey container is accessible to everyone */}
           <JourneyContainer
