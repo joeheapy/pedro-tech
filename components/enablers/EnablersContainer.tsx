@@ -1,23 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { EnablerDisplay } from '@/components/enablers/EnablersDisplay'
-import { EnablerForm } from '@/components/enablers/EnablersForm'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
+import { TariffRoundel } from '@/components/ui/tarrifRoundal'
+import { CsvDownloadButton } from './CsvDownloadButton'
 import {
   EnablerData,
   JourneyStep,
   CustomerPainPointData,
   BusinessPainPointData,
   NUMBER_OF_FEATURES,
+  TARIFFS,
   PersonaData,
 } from '@/app/lib/types'
-//import { ITEMS_PER_ROW } from "@/lib/types";
 
 interface EnablersContainerProps {
   journeySteps: JourneyStep[]
   customerPains: CustomerPainPointData[]
   businessPains: BusinessPainPointData[]
-  personaData: PersonaData[] // Ensure prop is typed correctly
+  personaData: PersonaData[]
   onEnablersGenerated: () => void
 }
 
@@ -31,6 +34,16 @@ export function EnablersContainer({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [enablerData, setEnablerData] = useState<EnablerData[]>([])
+
+  const hasJourney = journeySteps.length > 0
+  const hasBusinessPains = businessPains && businessPains.length > 0
+  const isDisabled = !hasJourney || !hasBusinessPains
+
+  const getStatusMessage = () => {
+    if (!hasJourney) return 'Create a service story first.'
+    if (!hasBusinessPains) return 'Generate business pain points first.'
+    return `Brainstorm ${NUMBER_OF_FEATURES} service enablers to get you started.`
+  }
 
   const handleGenerateEnablers = async () => {
     setLoading(true)
@@ -163,29 +176,81 @@ VERIFY BEFORE RESPONDING:
 - Are all descriptions 15 words or fewer?
 - Ensure all text is written in sentence case.`
 
-    // console.log("Generated Prompt:", {
-    //   journeySteps: stepsText,
-    //   // customerPains: customerPainsText,
-    //   // businessPains: businessPainsText,
-    //   personaData: personaScenarioText,
-    //   fullPrompt: prompt,
-    // });
-
     return prompt
   }
 
   return (
-    <div className="width-full">
-      <div className="space-y-8">
-        <EnablerForm
-          onGenerate={handleGenerateEnablers}
-          loading={loading}
-          hasJourney={journeySteps.length > 0}
-          hasCustomerPains={customerPains && customerPains.length > 0}
-          hasBusinessPains={businessPains && businessPains.length > 0}
-        />
-        <EnablerDisplay enablers={enablerData} error={error} />
-      </div>
+    <div className="w-full space-y-8">
+      {/* Form Section (Previously EnablerForm) */}
+      <Card
+        className={`w-full p-6 ${
+          isDisabled ? 'bg-muted' : 'gradient-pink-dark'
+        } border-none`}
+      >
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-semibold text-foreground">
+                Service Enablers
+              </h2>
+              <p className="text-base text-muted-foreground">
+                {getStatusMessage()}
+              </p>
+            </div>
+            <div>
+              <TariffRoundel cost={TARIFFS.enablers} variant="small" />
+            </div>
+          </div>
+          <Button
+            type="button"
+            onClick={handleGenerateEnablers}
+            disabled={loading || isDisabled}
+            className={`bg-foreground dark:text-background hover:opacity-70 transition-opacity ${
+              isDisabled ? 'opacity-60' : ''
+            }`}
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading ? 'Saving you time...' : 'Identify Service Enablers'}
+          </Button>
+        </div>
+      </Card>
+
+      {/* Display Section (Previously EnablerDisplay) */}
+      {error && (
+        <Card className="bg-red-50 p-4">
+          <p className="text-red-600">{error}</p>
+        </Card>
+      )}
+
+      {enablerData.length > 0 && (
+        <div className="w-full flex flex-col items-center space-y-4">
+          <div className="flex flex-wrap justify-center md:justify-start gap-3">
+            {enablerData.map((enabler, index) => (
+              <Card
+                key={index}
+                className="w-[340px] flex-none gradient-pink-dark-reverse border-none"
+              >
+                <CardContent className="p-4">
+                  <div className="space-y-1">
+                    <div>
+                      <h2 className="text-xl">{enabler.enablerName}</h2>
+                    </div>
+                    <p className="text-sm text-foreground">
+                      {enabler.enablerDescription}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {enablerData.length > 0 && (
+            <div className="mt-4">
+              <CsvDownloadButton enablers={enablerData} />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

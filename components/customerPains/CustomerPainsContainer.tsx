@@ -1,13 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { CustomerPainsForm } from '@/components/customerPains/CustomerPainsForm'
-import { CustomerPainsDisplay } from '@/components/customerPains/CustomerPainsDisplay'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
+import { TariffRoundel } from '@/components/ui/tarrifRoundal'
+import { CsvDownloadButton } from './CsvDownloadButton'
 import {
   JourneyStep,
   CustomerPainPointData,
   NUMBER_OF_JOURNEY_STEPS,
   ITEMS_PER_ROW,
+  TARIFFS,
 } from '@/app/lib/types'
 
 interface CustomerPainsContainerProps {
@@ -24,6 +28,8 @@ export function CustomerPainsContainer({
   const [error, setError] = useState('')
 
   const isDisabled = !journeySteps.length
+  const itemsPerRow = ITEMS_PER_ROW
+  const painPointIndices = Array.from({ length: itemsPerRow }, (_, i) => i + 1)
 
   const handleGenerateCustomerPains = async () => {
     setLoading(true)
@@ -66,8 +72,6 @@ export function CustomerPainsContainer({
       )
       .join('\n\n')
 
-    //console.log("Steps Text:", stepsText);
-
     const prompt = `You are a customer experience expert. Here is the customer journey: 
     
     ${stepsText}
@@ -91,20 +95,84 @@ export function CustomerPainsContainer({
   }
 
   return (
-    <div className="width-full">
-      <div className="space-y-8">
-        <CustomerPainsForm
-          onGenerate={handleGenerateCustomerPains}
-          loading={loading}
-          disabled={isDisabled}
-        />
-        <CustomerPainsDisplay
-          painPoints={painPoints}
-          error={error}
-          loading={loading}
-          journeySteps={journeySteps}
-        />
-      </div>
+    <div className="w-full space-y-8">
+      {/* Form Section (Previously CustomerPainsForm) */}
+      <Card
+        className={`w-full p-6 ${
+          isDisabled ? 'bg-muted' : 'gradient-blue-dark'
+        } border-none`}
+      >
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-semibold text-foreground">
+                Customer Pain Points
+              </h2>
+              <p className="text-base text-muted-foreground">
+                {isDisabled
+                  ? 'Create a service story first to identify pain points.'
+                  : 'Identify likely customer pain points at each journey step.'}
+              </p>
+            </div>
+            <div>
+              <TariffRoundel cost={TARIFFS.customerPains} variant="small" />
+            </div>
+          </div>
+          <Button
+            type="button"
+            onClick={handleGenerateCustomerPains}
+            disabled={loading || isDisabled}
+            className={`bg-foreground dark:text-background hover:opacity-70 transition-opacity ${
+              isDisabled ? 'opacity-60' : ''
+            }`}
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading ? 'Saving you time...' : 'Identify Customer Pain Points'}
+          </Button>
+        </div>
+      </Card>
+
+      {/* Display Section (Previously CustomerPainsDisplay) */}
+      {error && (
+        <Card className="bg-red-50 p-4">
+          <p className="text-red-600">{error}</p>
+        </Card>
+      )}
+
+      {painPoints.length > 0 && (
+        <div className="mt-8">
+          <div className="flex overflow-x-auto gap-4 pb-4">
+            {painPoints.map((point, index) => (
+              <Card
+                key={index}
+                className="p-4 flex-none w-[250px] gradient-blue-dark-reverse border-none"
+              >
+                <h3 className="font-semibold mb-4">
+                  Step {index + 1}: {journeySteps[index]?.title}
+                </h3>
+                <div className="space-y-2">
+                  {painPointIndices.map((i) => (
+                    <div key={`pain-${index}-${i}`}>
+                      <p className="mt-1 text-sm">
+                        {point[`customer-pain-${i}` as keyof typeof point]}
+                      </p>
+                      {i < itemsPerRow && (
+                        <hr className="border-gray-400 mt-2" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
+          <div className="flex justify-center mt-4">
+            <CsvDownloadButton
+              painPoints={painPoints}
+              journeySteps={journeySteps}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

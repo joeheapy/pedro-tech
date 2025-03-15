@@ -1,13 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import { PersonaDisplay } from '@/components/personas/PersonaDisplay'
-import { PersonaForm } from '@/components/personas/PersonaForm'
-import { PersonaData, JourneyStep, NUMBER_OF_PERSONA } from '@/app/lib/types'
+import {
+  PersonaData,
+  JourneyStep,
+  NUMBER_OF_PERSONA,
+  TARIFFS,
+} from '@/app/lib/types'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
+import { TariffRoundel } from '@/components/ui/tarrifRoundal'
+import { CsvDownloadButton } from './CsvDownloadButton'
 
 interface PersonasContainerProps {
   journeySteps: JourneyStep[]
-  onPersonasGenerated: (personas: PersonaData[]) => void // Update prop type
+  onPersonasGenerated: (personas: PersonaData[]) => void
 }
 
 export function PersonasContainer({
@@ -77,15 +85,83 @@ export function PersonasContainer({
   }
 
   return (
-    <div className="width-full">
-      <div className="space-y-8">
-        <PersonaForm
-          onGenerate={handleGeneratePersonas}
-          loading={loading}
-          disabled={!journeySteps.length}
-        />
-        <PersonaDisplay personas={personaData} error={error} />
-      </div>
+    <div className="w-full space-y-8">
+      {/* Form Section (Previously PersonaForm) */}
+      <Card
+        className={`w-full p-6 ${
+          journeySteps.length === 0 ? 'bg-muted' : 'gradient-orange-yellow'
+        } border-none`}
+      >
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-semibold text-foreground">
+                Personas
+              </h2>
+              <p className="text-base text-muted-foreground">
+                {journeySteps.length === 0
+                  ? 'Create a service story first to draft personas.'
+                  : 'Draft user personas to inform your research and trigger some early ideas.'}
+              </p>
+            </div>
+            <div>
+              <TariffRoundel cost={TARIFFS.personas} variant="small" />
+            </div>
+          </div>
+          <Button
+            type="button"
+            onClick={handleGeneratePersonas}
+            disabled={loading || journeySteps.length === 0}
+            className={`bg-foreground dark:text-background hover:opacity-70 transition-opacity ${
+              journeySteps.length === 0 ? 'opacity-60' : ''
+            }`}
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading ? 'Saving you time...' : 'Draft Personas'}
+          </Button>
+        </div>
+      </Card>
+
+      {/* Display Section (Previously PersonaDisplay) */}
+      {error && (
+        <Card className="bg-red-50 p-4">
+          <p className="text-red-600">{error}</p>
+        </Card>
+      )}
+
+      {personaData.length > 0 && (
+        <div className="w-full flex flex-col items-center space-y-4">
+          <div className="flex flex-wrap justify-center md:justify-start gap-4">
+            {personaData.map((persona, index) => (
+              <Card
+                key={index}
+                className="w-[340px] flex-none gradient-orange-yellow-reverse border-none"
+              >
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                    <div className="border-2 border-foreground p-3 rounded-lg">
+                      <h2 className="text-2xl ">{persona.personaName}</h2>
+                      <p className="text-sm">Aged {persona.personaAge}</p>
+                    </div>
+                    <h3 className="text-xl font-bold">
+                      {persona.personaGroupName}
+                    </h3>
+                    <p className="text-lg">{persona.personaGroupDescription}</p>
+                    <p className="text-base">{persona.personaScenario}</p>
+                    <blockquote className="text-base italic border-l-2 border-foreground pl-2">
+                      {`"${persona.personaQuote}"`}
+                    </blockquote>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-4">
+            <CsvDownloadButton personas={personaData} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
