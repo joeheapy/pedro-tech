@@ -98,7 +98,7 @@ export function PersonasContainer({
               <h2 className="text-2xl font-semibold text-foreground">
                 Personas
               </h2>
-              <p className="text-base text-muted-foreground">
+              <p className="text-base text-foreground">
                 {journeySteps.length === 0
                   ? 'Create a service story first to draft personas.'
                   : 'Draft user personas to inform your research and trigger some early ideas.'}

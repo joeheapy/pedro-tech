@@ -30,6 +30,24 @@ model Project {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
+  // Relation to JourneySteps
+  journeySteps JourneySteps[]
+
   // Index for query optimization
   @@index([profileId])
+}
+
+model JourneySteps {
+  id                  String   @id @default(uuid())
+  businessProposition String
+  customerScenario    String
+  targetCustomers     String
+  personaName         String
+  journeyData         Json // To store the journey steps array
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Add this relationship field:
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }

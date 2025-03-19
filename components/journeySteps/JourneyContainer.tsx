@@ -8,13 +8,16 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2 } from 'lucide-react'
 import { Edit2, Save } from 'react-feather'
-import { JourneyStep, JourneyFormData, TARIFFS } from '@/app/lib/types'
-import { TariffRoundel } from '@/components/ui/tarrifRoundal'
+import { JourneyStep, JourneyFormData } from '@/app/lib/types'
+// import { TariffRoundel } from '@/components/ui/tarrifRoundal'
 import CsvDownloadButton from './CsvDownloadButton'
+import { getProjectIdFromUrl } from '@/app/utils/getProjectId'
+import { toast } from 'react-hot-toast' // or your preferred toast library
 
 interface JourneyContainerProps {
   onJourneyGenerated: (steps: JourneyStep[]) => void
   journeySteps: JourneyStep[]
+  projectId?: string // Make this optional to handle undefined cases
 }
 
 interface EditableStep extends JourneyStep {
@@ -29,6 +32,7 @@ interface EditingValues {
 export function JourneyContainer({
   onJourneyGenerated,
   journeySteps,
+  projectId,
 }: JourneyContainerProps) {
   // Form state
   const [formData, setFormData] = useState<JourneyFormData>({
@@ -47,6 +51,7 @@ export function JourneyContainer({
   const [editingValues, setEditingValues] = useState<{
     [key: number]: EditingValues
   }>({})
+  const [savingStepIndex, setSavingStepIndex] = useState<number | null>(null)
 
   // Initialize editable steps when journey steps change
   useEffect(() => {
@@ -90,6 +95,7 @@ export function JourneyContainer({
     setError('')
 
     try {
+      // 1. Call OpenAI for journey steps
       const response = await fetch('/api/openai/customer-journey', {
         method: 'POST',
         headers: {
@@ -105,7 +111,49 @@ export function JourneyContainer({
       }
 
       const { data } = await response.json()
-      onJourneyGenerated(data) // Lift state up
+
+      // 2. Update local state first (this already happens)
+      onJourneyGenerated(data)
+
+      // 3. Get the project ID from URL
+      const projectId = getProjectIdFromUrl()
+      if (!projectId) {
+        console.warn(
+          'No project ID found in URL, unable to save journey steps to database'
+        )
+        return
+      }
+
+      // 4. Save to database
+      const saveResponse = await fetch(
+        `/api/projects/${projectId}/journey-steps`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            formData: {
+              businessProposition: formData.business_proposition,
+              customerScenario: formData.customer_scenario,
+              targetCustomers: formData.target_customers,
+              personaName: formData.persona_name,
+            },
+            journeySteps: data,
+          }),
+        }
+      )
+
+      if (!saveResponse.ok) {
+        const errorText = await saveResponse.text()
+        console.error('Error saving journey steps:', errorText)
+        toast.error('Failed to save journey steps')
+        // Don't throw here - we already have the data in the UI
+        // Just log the error but don't disrupt the user experience
+      } else {
+        console.log('Journey steps saved successfully to database')
+        toast.success('Journey steps saved successfully')
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
@@ -157,10 +205,35 @@ export function JourneyContainer({
     }))
   }
 
-  const handleSave = (stepNumber: number) => {
+  const handleSave = async (stepNumber: number) => {
     const values = editingValues[stepNumber]
     if (!values) return
 
+    // Get project ID from props or URL
+    const currentProjectId = projectId || getProjectIdFromUrl()
+    if (!currentProjectId) {
+      toast.error('Cannot save: Missing project ID')
+      return
+    }
+
+    // Create updatedJourneySteps BEFORE updating local state
+    // This ensures we have the correct edited values
+    const updatedJourneySteps = editableSteps.map((step) => {
+      if (step.step === stepNumber) {
+        return {
+          step: stepNumber,
+          title: values.title,
+          description: values.description,
+        }
+      }
+      return {
+        step: step.step,
+        title: step.title,
+        description: step.description,
+      }
+    })
+
+    // Update local state
     setEditableSteps((steps) =>
       steps.map((s) =>
         s.step === stepNumber
@@ -173,11 +246,55 @@ export function JourneyContainer({
           : s
       )
     )
+
+    // Update parent component state right away
+    // This ensures UI consistency
+    onJourneyGenerated(updatedJourneySteps)
+
+    // Then save to database
+    try {
+      setSavingStepIndex(stepNumber)
+
+      // Get the form data
+      const formDataToSave = {
+        businessProposition: formData.business_proposition,
+        customerScenario: formData.customer_scenario,
+        targetCustomers: formData.target_customers,
+        personaName: formData.persona_name,
+      }
+
+      // Save to database
+      const saveResponse = await fetch(
+        `/api/projects/${currentProjectId}/journey-steps`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            formData: formDataToSave,
+            journeySteps: updatedJourneySteps, // Already created above
+          }),
+        }
+      )
+
+      if (!saveResponse.ok) {
+        const errorText = await saveResponse.text()
+        console.error('Error saving edited step:', errorText)
+        toast.error('Failed to save changes')
+      } else {
+        toast.success('Changes saved successfully')
+      }
+    } catch (error) {
+      console.error('Error saving step:', error)
+      toast.error('Failed to save changes')
+    } finally {
+      setSavingStepIndex(null)
+    }
   }
 
   return (
     <div className="w-full space-y-8">
-      {/* Form Section (Previously JourneyForm) */}
       <form onSubmit={handleSubmit}>
         <Card className="w-full p-6 gradient-teal-lime border-none">
           <div className="space-y-6">
@@ -193,9 +310,6 @@ export function JourneyContainer({
                     </p>
                   </>
                 )}
-              </div>
-              <div>
-                <TariffRoundel cost={TARIFFS.journeySteps} variant="small" />
               </div>
             </div>
 
@@ -316,9 +430,19 @@ export function JourneyContainer({
                         variant="outline"
                         size="sm"
                         className="w-full"
+                        disabled={savingStepIndex === step.step}
                       >
-                        <Save className="h-4 w-4 mr-2" />
-                        Save
+                        {savingStepIndex === step.step ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="h-4 w-4 mr-2" />
+                            Save
+                          </>
+                        )}
                       </Button>
                     </>
                   ) : (
@@ -344,8 +468,11 @@ export function JourneyContainer({
               </Card>
             ))}
           </div>
-          <div className="flex justify-center mt-4">
-            <CsvDownloadButton journeySteps={journeySteps} />
+
+          <div className="flex justify-center gap-4 mt-4">
+            <div>
+              <CsvDownloadButton journeySteps={journeySteps} />
+            </div>
           </div>
         </div>
       )}
