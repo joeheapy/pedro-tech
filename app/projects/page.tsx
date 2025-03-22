@@ -4,26 +4,8 @@ import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import CreateProject from '@/components/createProject'
+import { Project, ProjectDTO } from '@/app/lib/types'
 import { toast } from 'react-hot-toast'
-
-// Interface for our client-side project with Date objects
-interface Project {
-  id: string
-  title: string
-  description: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-// Interface for API response with string dates
-interface ProjectDTO {
-  id: string
-  title: string
-  description: string
-  createdAt: string
-  updatedAt: string
-  profileId: string
-}
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])

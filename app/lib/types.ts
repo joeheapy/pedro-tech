@@ -48,18 +48,32 @@ export interface Tokenstate {
   error: string | null
 }
 
+// Form data structure
 export interface JourneyFormData {
-  target_customers: string
-  persona_name: string
   business_proposition: string
   customer_scenario: string
+  target_customers: string
+  persona_name: string
 }
 
+// Journey step structure (OpenAI response)
 export interface JourneyStep {
   step: number
   title: string
   description: string
-  responseTitle: string
+}
+
+// Database record structure (matching Prisma schema)
+export interface JourneyStepsRecord {
+  id: string
+  businessProposition: string
+  customerScenario: string
+  targetCustomers: string
+  personaName: string
+  journeyData: JourneyStep[]
+  projectId: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface CustomerPainPointData {
