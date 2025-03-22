@@ -31,6 +31,7 @@ export default function ProjectsPage() {
           description: project.description,
           createdAt: new Date(project.createdAt),
           updatedAt: new Date(project.updatedAt),
+          profileId: project.profileId,
         }))
 
         setProjects(formattedProjects)

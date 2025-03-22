@@ -157,6 +157,7 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
 
   return (
     <>
+      {/* TOKEN RESET BUTTON IS HIDDEN */}
       <div className="sr-only">
         <TokenControls
           Tokens={Tokens.balance}

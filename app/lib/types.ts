@@ -1,4 +1,4 @@
-export const OPEN_TOKEN_BALANCE = 1000
+export const OPEN_TOKEN_BALANCE = 100000
 
 export const NUMBER_OF_JOURNEY_STEPS = 10
 
@@ -14,6 +14,24 @@ export const OPENAI_TEMP = 0.7
 export const OPENAI_MAX_TOKENS = 4000
 
 export const OPENAI_TIMEOUT = 60000
+
+export interface Project {
+  id: string
+  title: string
+  description: string | null
+  createdAt: Date
+  updatedAt: Date
+  profileId?: string
+}
+
+export interface ProjectDTO {
+  id: string
+  title: string
+  description: string | null
+  createdAt: string
+  updatedAt: string
+  profileId: string
+}
 
 export interface Tariffs {
   journeySteps: number

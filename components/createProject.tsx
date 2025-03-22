@@ -29,7 +29,13 @@ interface CreateProjectProps {
   onDelete?: (id: string) => void
   onGoToProject?: (id: string) => void
   initialMode?: 'create' | 'view'
-  project?: Project
+  project?: {
+    id: string
+    title: string
+    description: string | null
+    createdAt: Date
+    updatedAt: Date
+  }
 }
 
 export default function CreateProject({
