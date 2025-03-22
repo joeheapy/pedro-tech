@@ -101,6 +101,19 @@ export default function ProjectsPage() {
     }
   }
 
+  const handleUpdateProject = async (updatedProject: Project) => {
+    try {
+      // No need to call API here as it's already called in the component
+      // Just update the local state
+      setProjects(
+        projects.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+      )
+    } catch (error) {
+      console.error('Error updating project:', error)
+      toast.error('Failed to update project')
+    }
+  }
+
   const handleGoToProject = (id: string) => {
     router.push(`/servicestorymaker?projectId=${id}`)
   }
@@ -146,6 +159,7 @@ export default function ProjectsPage() {
                 project={project}
                 onDelete={handleDeleteProject}
                 onGoToProject={handleGoToProject}
+                onSave={handleUpdateProject}
               />
             ))}
 
