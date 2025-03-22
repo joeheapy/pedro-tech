@@ -30,14 +30,13 @@ model Project {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  // Relation to JourneySteps
-  journeySteps JourneySteps[]
-
-  // Add this line
-  personas persona[]
-
-  // Add this new relation
-  customerPains customerpains[]
+  // Relations to each section in the project
+  journeySteps    JourneySteps[]
+  personas        persona[]
+  customerPains   customerpains[]
+  businessPains   businesspains[]
+  serviceFeatures servicefeatures[]
+  serviceEnablers serviceenablers[]
 
   // Index for query optimization
   @@index([profileId])
@@ -74,6 +73,39 @@ model customerpains {
   painPoints Json // Stores CustomerPainPointData as JSON
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  // Relationship with Project
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model businesspains {
+  id         String   @id @default(uuid())
+  painPoints Json // Stores BusinessPainPointData as JSON
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relationship with Project
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model servicefeatures {
+  id        String   @id @default(uuid())
+  features  Json // Stores array of features
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship with Project
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model serviceenablers {
+  id        String   @id @default(uuid())
+  enablers  Json // Stores array of enablers
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relationship with Project
   projectId String

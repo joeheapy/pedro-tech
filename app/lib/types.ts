@@ -94,6 +94,18 @@ export interface JourneyStepsRecord {
   updatedAt: string
 }
 
+// Data structure for persona form
+export interface PersonaData {
+  personaName: string
+  personaAge: number
+  personaGroupName: string
+  personaGroupDescription: string
+  personaScenario: string
+  personaQuote: string
+  personaGender: string
+}
+
+// Database record structure for a customer pain point
 export interface CustomerPainPointData {
   [key: `customer-pain-${number}`]: string
 }
@@ -103,7 +115,7 @@ export interface CustomerPainPointsData {
   painPoints: CustomerPainPointData[]
 }
 
-// This is what you'll get from the database
+// Structure of a single customer pain record from the database
 export interface CustomerPainRecord {
   id: string
   painPoints: CustomerPainPointData[]
@@ -116,19 +128,30 @@ export interface BusinessPainPointData {
   [key: `business-pain-${number}`]: string
 }
 
-export interface PersonaData {
-  personaName: string
-  personaAge: number
-  personaGroupName: string
-  personaGroupDescription: string
-  personaScenario: string
-  personaQuote: string
-  personaGender: string
+export interface BusinessPainPointsData {
+  painPoints: BusinessPainPointData[]
+}
+
+export interface BusinessPainRecord {
+  id: string
+  painPoints: BusinessPainPointData[]
+  projectId: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface FeatureData {
   featureName: string
   featureDescription: string
+}
+
+export interface ServiceFeature {
+  featureName: string
+  featureDescription: string
+}
+
+export interface ServiceFeaturesData {
+  features: ServiceFeature[]
 }
 
 export interface EnablerData {
