@@ -179,16 +179,19 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
                 </Link>
               </div>
 
-              <Card>
+              <Card className="gradient-blue-dark border-none shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold">
-                    {currentProject.title}
-                  </CardTitle>
-                  {currentProject.description && (
-                    <CardDescription className="mt-2 text-base">
-                      {currentProject.description}
-                    </CardDescription>
-                  )}
+                  <div className="flex flex-col space-y-2">
+                    <CardTitle className="text-2xl font-bold text-primary-background">
+                      {currentProject.title}
+                    </CardTitle>
+                    {currentProject.description && (
+                      <CardDescription className="mt-2 text-base text-primary-foreground/80">
+                        {currentProject.description}
+                      </CardDescription>
+                    )}
+                    <div className="flex items-center mt-2 text-xs text-primary-foreground/70"></div>
+                  </div>
                 </CardHeader>
               </Card>
             </div>

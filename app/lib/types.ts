@@ -98,6 +98,20 @@ export interface CustomerPainPointData {
   [key: `customer-pain-${number}`]: string
 }
 
+// This represents the full array of pain points for a project
+export interface CustomerPainPointsData {
+  painPoints: CustomerPainPointData[]
+}
+
+// This is what you'll get from the database
+export interface CustomerPainRecord {
+  id: string
+  painPoints: CustomerPainPointData[]
+  projectId: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface BusinessPainPointData {
   [key: `business-pain-${number}`]: string
 }

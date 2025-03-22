@@ -36,6 +36,9 @@ model Project {
   // Add this line
   personas persona[]
 
+  // Add this new relation
+  customerPains customerpains[]
+
   // Index for query optimization
   @@index([profileId])
 }
@@ -60,6 +63,17 @@ model persona {
   personas  Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relationship with Project
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model customerpains {
+  id         String   @id @default(uuid())
+  painPoints Json // Stores CustomerPainPointData as JSON
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // Relationship with Project
   projectId String
