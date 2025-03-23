@@ -152,7 +152,7 @@ export default function CreateProject({
   // Render edit mode (similar to create mode but with different actions)
   if (mode === 'edit') {
     return (
-      <Card className="mb-6 w-full">
+      <Card className="gradient-pink-dark mb-6 w-full">
         <CardHeader>
           <CardTitle className="text-xl">Edit Project</CardTitle>
         </CardHeader>
@@ -227,7 +227,7 @@ export default function CreateProject({
             {minCharacters} characters)
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={() => setMode('view')}>
+            <Button variant="outline" onClick={() => setMode('view')}>
               Cancel
             </Button>
             <Button
@@ -350,7 +350,7 @@ export default function CreateProject({
 
   // Render view mode (project card) - add Edit button
   return (
-    <Card className="mb-4">
+    <Card className="gradient-blue-dark mb-4">
       <CardHeader>
         <CardTitle className="text-2xl text-foreground font-bold">
           {title}
@@ -393,9 +393,9 @@ export default function CreateProject({
 
           {/* Delete button */}
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="text-forground hover:bg-destructive/10 hover:text-destructive"
             onClick={() => project?.id && onDelete?.(project.id)}
           >
             <Trash2 size={18} />
