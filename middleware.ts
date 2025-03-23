@@ -59,7 +59,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next()
   }
 
-  // Redirect subscribed users away from subscribe page
+  // Don't send subscribed users to the subscribed page
   if (userId && pathname === '/subscribe') {
     try {
       // First check if profile exists
@@ -156,7 +156,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (
     userId &&
     pathname === '/' &&
-    !req.headers.get('referer')?.includes('/servicestorymaker')
+    !req.headers.get('referer') // Only redirect on direct navigation or external links
   ) {
     try {
       // Check if user has a profile in Prisma

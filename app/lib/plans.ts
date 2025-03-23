@@ -18,11 +18,7 @@ export const availablePlans: Plan[] = [
     interval: 'week',
     description:
       'Great if you want to try the service before committing longer.',
-    features: [
-      'Unlimited AI meal plans',
-      'AI nutrition insights',
-      'Cancel anytime',
-    ],
+    features: ['Use all features', 'Download CSVs', 'Cancel anytime'],
   },
   {
     name: 'Monthly Plan',
@@ -33,9 +29,10 @@ export const availablePlans: Plan[] = [
     description:
       'Perfect for ongoing, month-to-month meal planning and features.',
     features: [
-      'Unlimited AI meal plans',
-      'Priority AI support',
+      'Use all features',
+      'Download CSVs',
       'Cancel anytime',
+      'Full documentation',
     ],
   },
   {
@@ -46,9 +43,10 @@ export const availablePlans: Plan[] = [
     description:
       'Best value for those committed to improving their diet long-term.',
     features: [
-      'Unlimited AI meal plans',
-      'All premium features',
+      'Use all features',
+      'Download CSVs',
       'Cancel anytime',
+      'Full documentation',
     ],
   },
 ]

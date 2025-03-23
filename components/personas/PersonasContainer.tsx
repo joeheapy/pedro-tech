@@ -210,7 +210,7 @@ export function PersonasContainer({
   }
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-6">
       {dataLoading ? (
         <Card className="w-full p-6 border-none">
           <div className="flex items-center justify-center p-8">
@@ -220,7 +220,7 @@ export function PersonasContainer({
         </Card>
       ) : (
         <>
-          {/* Form Section (Previously PersonaForm) */}
+          {/* Form Section */}
           <Card
             className={`w-full p-6 ${
               journeySteps.length === 0 ? 'bg-muted' : 'gradient-orange-yellow'
@@ -256,7 +256,7 @@ export function PersonasContainer({
             </div>
           </Card>
 
-          {/* Display Section (Previously PersonaDisplay) */}
+          {/* Display Section */}
           {error && (
             <Card className="bg-red-50 p-4">
               <p className="text-red-600">{error}</p>
@@ -272,10 +272,12 @@ export function PersonasContainer({
                     className="w-full gradient-orange-yellow-reverse border-none"
                   >
                     <CardContent className="p-4">
-                      <div className="space-y-4">
+                      <div className="space-y-6">
                         <div className="border-2 border-foreground p-3 rounded-lg">
-                          <h2 className="text-2xl ">{persona.personaName}</h2>
-                          <p className="text-sm">Aged {persona.personaAge}</p>
+                          <h2 className="text-2xl font-bold ">
+                            {persona.personaName}
+                          </h2>
+                          <p className="text-base">Aged {persona.personaAge}</p>
                         </div>
                         <h3 className="text-xl font-bold">
                           {persona.personaGroupName}

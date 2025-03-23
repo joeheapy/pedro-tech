@@ -284,7 +284,7 @@ VERIFY BEFORE RESPONDING:
   }
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-6">
       {dataLoading ? (
         <div className="flex justify-center items-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -304,7 +304,7 @@ VERIFY BEFORE RESPONDING:
                   <h2 className="text-2xl font-semibold text-foreground">
                     Service Enablers
                   </h2>
-                  <p className="text-base text-muted-foreground">
+                  <p className="text-base text-foreground">
                     {getStatusMessage()}
                   </p>
                 </div>
@@ -334,12 +334,12 @@ VERIFY BEFORE RESPONDING:
           )}
 
           {enablerData.length > 0 && (
-            <div className="w-full flex flex-col items-center space-y-4">
-              <div className="flex flex-wrap justify-center md:justify-start gap-3">
+            <div className="w-full flex flex-col space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
                 {enablerData.map((enabler, index) => (
                   <Card
                     key={index}
-                    className="w-[340px] flex-none gradient-pink-dark-reverse border-none"
+                    className="h-full gradient-pink-dark-reverse border-none"
                   >
                     <CardContent className="p-4">
                       <div className="space-y-1">
@@ -355,11 +355,9 @@ VERIFY BEFORE RESPONDING:
                 ))}
               </div>
 
-              {enablerData.length > 0 && (
-                <div className="mt-4">
-                  <CsvDownloadButton enablers={enablerData} />
-                </div>
-              )}
+              <div className="mt-4 flex justify-center">
+                <CsvDownloadButton enablers={enablerData} />
+              </div>
             </div>
           )}
         </>

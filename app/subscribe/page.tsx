@@ -65,7 +65,7 @@ export default function Subscribe() {
           'This feature requires an active subscription. Choose a plan to continue.',
           {
             icon: '🔐',
-            duration: 5000,
+            duration: 3000,
             style: {
               border: '1px solid #7c3aed',
               padding: '16px',
@@ -80,7 +80,7 @@ export default function Subscribe() {
           "We couldn't verify your subscription status. Please refresh or contact support if the problem persists.",
           {
             icon: '⚠️',
-            duration: 5000,
+            duration: 3000,
             style: {
               border: '1px solid #f59e0b',
               padding: '16px',
@@ -134,7 +134,7 @@ export default function Subscribe() {
   }
 
   return (
-    <div className="px-4 py-8 sm:py-12 lg:py-16 bg-background">
+    <div className="px-4 py-8 sm:py-12 lg:py-16 ">
       <Toaster position="bottom-right" />
 
       {/* Section Header */}

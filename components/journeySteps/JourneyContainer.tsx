@@ -423,7 +423,7 @@ export function JourneyContainer({
   }
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-6">
       {dataLoading ? (
         <Card className="w-full p-6 gradient-teal-lime border-none">
           <div className="flex items-center justify-center p-8">
@@ -453,7 +453,10 @@ export function JourneyContainer({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="business_proposition">
+                    <Label
+                      htmlFor="business_proposition"
+                      className="text-lg font-semibold"
+                    >
                       Business Proposition
                     </Label>
                     <Input
@@ -461,40 +464,53 @@ export function JourneyContainer({
                       placeholder="Roadside recovery for electric vehicles"
                       value={formData.business_proposition}
                       onChange={handleInputChange('business_proposition')}
-                      className="input-custom"
+                      className="input-custom text-base font-semibold"
                       required
                       aria-required="true"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="customer_scenario">Customer Scenario</Label>
+                    <Label
+                      htmlFor="customer_scenario"
+                      className="text-base font-semibold"
+                    >
+                      Customer Scenario
+                    </Label>
                     <Input
                       id="customer_scenario"
                       placeholder="Broken down on a motorway in an electric vehicle"
                       value={formData.customer_scenario}
                       onChange={handleInputChange('customer_scenario')}
-                      className="input-custom"
+                      className="input-custom text-base font-semibold"
                       required
                       aria-required="true"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="target_customers">Target Customers</Label>
+                    <Label
+                      htmlFor="target_customers"
+                      className="text-base font-semibold"
+                    >
+                      Target Customers
+                    </Label>
                     <Input
                       id="target_customers"
                       placeholder="Motorists with electric vehicles"
                       value={formData.target_customers}
                       onChange={handleInputChange('target_customers')}
-                      className="input-custom"
+                      className="input-custom text-base font-semibold"
                       required
                       aria-required="true"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="persona_name">
+                    <Label
+                      htmlFor="persona_name"
+                      className="text-base font-semibold"
+                    >
                       Give the character in your service story a name
                     </Label>
                     <Input
@@ -502,7 +518,7 @@ export function JourneyContainer({
                       placeholder="Larry"
                       value={formData.persona_name}
                       onChange={handleInputChange('persona_name')}
-                      className="input-custom"
+                      className="input-custom text-base font-semibold"
                       required
                       aria-required="true"
                     />
@@ -527,7 +543,7 @@ export function JourneyContainer({
             </Card>
           </form>
 
-          {/* Display Section (Previously JourneyDisplay) */}
+          {/* Display Section */}
           {journeySteps?.length > 0 && (
             <div className="mt-8">
               <div className="flex overflow-x-auto gap-4 pb-4">
@@ -549,7 +565,7 @@ export function JourneyContainer({
                                 e.target.value
                               )
                             }
-                            className="w-full text-foreground"
+                            className="w-full text-base font-semibold text-foreground"
                             placeholder="Step title"
                           />
                           <Textarea
@@ -562,7 +578,7 @@ export function JourneyContainer({
                                 e.target.value
                               )
                             }
-                            className="w-full min-h-[160px] text-foreground"
+                            className="w-full min-h-[160px] text-base font-semibold text-foreground"
                             placeholder="Step description"
                           />
                           <Button
@@ -587,10 +603,10 @@ export function JourneyContainer({
                         </>
                       ) : (
                         <>
-                          <h3 className="font-semibold">
+                          <h3 className="font-bold text-base">
                             Step {step.step}: {step.title}
                           </h3>
-                          <p className="text-sm text-foreground">
+                          <p className="text-sm font-medium text-foreground">
                             {step.description}
                           </p>
                           <Button

@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation'
 import CreateProject from '@/components/createProject'
 import { Project, ProjectDTO } from '@/app/lib/types'
 import { toast } from 'react-hot-toast'
+import { useUser } from '@clerk/nextjs'
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const { user, isLoaded } = useUser()
 
   // Fetch projects when component mounts
   useEffect(() => {
@@ -119,13 +121,16 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="min-h-screen pt-20 p-4">
+    <main className="min-h-screen pt-12 p-4">
       <div className="container mx-auto">
         {/* Flex container for title and button */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Projects</h1>
+          <h1 className="text-3xl font-bold">
+            {isLoaded && user?.firstName ? `${user.firstName}'s` : 'Your'}{' '}
+            projects
+          </h1>
           <button
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors font-medium flex items-center gap-2"
+            className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors font-semibold flex items-center gap-2"
             onClick={() => setShowCreateForm(true)}
           >
             <Plus size={18} />

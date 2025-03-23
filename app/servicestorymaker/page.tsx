@@ -21,12 +21,7 @@ import { useTokens } from '@/app/utils/useTokens'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import UpgradeYourAccess from '@/components/upgradeYourAccess'
 import { toast } from 'react-hot-toast'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/card'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -166,31 +161,26 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
         />
       </div>
       <main className="min-h-screen">
-        <div className="container mx-auto space-y-8 py-8">
+        <div className="container mx-auto space-y-8 py-6">
           {/* Project details section for subscribed users */}
           {isSubscribed && currentProject && (
-            <div className="mb-8">
-              <div className="flex items-center mb-4">
-                <Link href="/projects">
-                  <Button variant="ghost" size="sm" className="gap-1">
-                    <ArrowLeft size={16} />
-                    Back to Projects
-                  </Button>
-                </Link>
-              </div>
-
-              <Card className="gradient-blue-dark border-none shadow-lg">
+            <div>
+              <Card className="gradient-blue-dark border-none">
                 <CardHeader>
-                  <div className="flex flex-col space-y-2">
+                  <div className="flex justify-between items-center">
                     <CardTitle className="text-2xl font-bold text-primary-background">
                       {currentProject.title}
                     </CardTitle>
-                    {currentProject.description && (
-                      <CardDescription className="mt-2 text-base text-primary-foreground/80">
-                        {currentProject.description}
-                      </CardDescription>
-                    )}
-                    <div className="flex items-center mt-2 text-xs text-primary-foreground/70"></div>
+                    <Link href="/projects">
+                      <Button
+                        variant="secondary"
+                        size="default"
+                        className="gap-1 text-base"
+                      >
+                        <ArrowLeft size={16} />
+                        Back to Projects
+                      </Button>
+                    </Link>
                   </div>
                 </CardHeader>
               </Card>

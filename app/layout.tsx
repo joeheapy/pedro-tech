@@ -5,6 +5,7 @@ import NavBar from '@/components/navbar'
 import { ClerkProvider } from '@clerk/nextjs'
 import ReactQueryClientProvider from '@/components/react-query-client-provider'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
+import Footer from '@/components/footer'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -24,16 +25,19 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className="h-full">
         <body
-          className={`${montserrat.variable} bg-background text-foreground font-montserrat antialiased`}
+          className={`${montserrat.variable} bg-background text-foreground font-montserrat antialiased flex flex-col min-h-screen`}
         >
           <ThemeProvider>
             <ReactQueryClientProvider>
-              <NavBar />
-              <main className="pt-16 max-w-7xl mx-auto p-4 min-h-screen">
-                {children}
-              </main>
+              <div className="flex flex-col min-h-screen">
+                <NavBar />
+                <main className="pt-16 max-w-7xl mx-auto p-4 w-full flex-grow">
+                  {children}
+                </main>
+                <Footer />
+              </div>
             </ReactQueryClientProvider>
           </ThemeProvider>
         </body>

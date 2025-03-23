@@ -208,7 +208,7 @@ export function BusinessPainsContainer({
   }
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-6">
       {/* Show loading state when fetching initial data */}
       {dataLoading ? (
         <div className="flex justify-center items-center py-8">
@@ -229,7 +229,7 @@ export function BusinessPainsContainer({
                   <h2 className="text-2xl font-semibold text-foreground">
                     Business Pain Points
                   </h2>
-                  <p className="text-base text-muted-foreground">
+                  <p className="text-base text-foreground">
                     {isDisabled
                       ? 'Create a service story first to identify pain points.'
                       : 'Identify likely business pain points at each journey step.'}

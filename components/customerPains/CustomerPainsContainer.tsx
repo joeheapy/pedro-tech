@@ -188,7 +188,7 @@ export function CustomerPainsContainer({
   }, [projectId, fetchExistingCustomerPains, hasFetched])
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-6">
       {dataLoading ? (
         // Add this loading indicator for initial data fetch
         <div className="flex justify-center items-center py-8">
@@ -209,7 +209,7 @@ export function CustomerPainsContainer({
                   <h2 className="text-2xl font-semibold text-foreground">
                     Customer Pain Points
                   </h2>
-                  <p className="text-base text-muted-foreground">
+                  <p className="text-base text-foreground">
                     {isDisabled
                       ? 'Create a service story first to identify pain points.'
                       : 'Identify likely customer pain points at each journey step.'}
