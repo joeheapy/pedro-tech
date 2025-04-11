@@ -140,6 +140,30 @@ export default function ProfilePage() {
     },
   })
 
+  // Mutation: Delete Account
+  const deleteAccountMutation = useMutation<unknown, Error, void>({
+    mutationFn: async () => {
+      const res = await fetch('/api/profile/delete-account', {
+        method: 'DELETE',
+      })
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to delete account.')
+      }
+      return res.json()
+    },
+    onSuccess: () => {
+      toast.success('Your account has been deleted successfully.')
+      // Sign out and redirect after a brief delay
+      setTimeout(() => {
+        router.push('/')
+      }, 2000)
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
   // Handler for confirming plan change
   const handleConfirmChangePlan = () => {
     if (selectedPlan) {
@@ -167,6 +191,17 @@ export default function ProfilePage() {
     }
   }
 
+  // Handle Delete Account Button Click
+  const handleDeleteAccount = () => {
+    if (
+      confirm(
+        'Are you sure you want to delete your account? This action cannot be undone.'
+      )
+    ) {
+      deleteAccountMutation.mutate()
+    }
+  }
+
   // Loading or Not Signed In States
   if (!isLoaded) {
     return (
@@ -187,12 +222,12 @@ export default function ProfilePage() {
 
   // Main Profile Page UI
   return (
-    <div className="min-h-screen flex items-start justify-center p-8 sm:pt-16 lg:pt-24 ">
+    <div className="min-h-screen flex items-start justify-center p-8 sm:pt-16 lg:pt-24">
       <Toaster position="top-center" />
-      <div className="w-full max-w-5xl bg-card shadow-md rounded-lg overflow-hidden">
+      <div className="w-full max-w-5xl bg-background shadow-md rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left Panel: Profile Information */}
-          <div className="w-full md:w-1/3 p-6 bg-primary text-primary-foreground flex flex-col items-center">
+          <div className="w-full md:w-1/3 p-6 flex flex-col items-center border-r border-border">
             <Image
               src={user.imageUrl || '/default-avatar.png'}
               alt="User Avatar"
@@ -200,14 +235,16 @@ export default function ProfilePage() {
               height={100}
               className="rounded-full mb-4"
             />
-            <h1 className="text-2xl font-bold mb-2">
+            <h1 className="text-2xl font-bold mb-2 text-foreground">
               {user.firstName} {user.lastName}
             </h1>
-            <p className="mb-4">{user.primaryEmailAddress?.emailAddress}</p>
+            <p className="mb-4 text-muted-foreground">
+              {user.primaryEmailAddress?.emailAddress}
+            </p>
           </div>
 
           {/* Right Panel: Subscription Details */}
-          <div className="w-full md:w-2/3 p-6 bg-muted">
+          <div className="w-full md:w-2/3 p-6">
             <h2 className="text-2xl font-bold mb-6 text-foreground">
               Subscription details
             </h2>
@@ -310,6 +347,31 @@ export default function ProfilePage() {
                     {unsubscribeMutation.isPending
                       ? 'Unsubscribing...'
                       : 'Unsubscribe'}
+                  </button>
+                </div>
+
+                {/* Add this after the Unsubscribe card */}
+                <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                  <h3 className="text-xl font-semibold mb-2 text-destructive">
+                    Delete Account
+                  </h3>
+                  <hr className="h-px my-2 mb-6 bg-background" />
+                  <p className="text-muted-foreground mb-6">
+                    Permanently delete your account and all associated data.
+                    This action cannot be undone.
+                  </p>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleteAccountMutation.isPending}
+                    className={`w-full text-lg font-semibold bg-destructive text-destructive-foreground py-2 px-4 rounded-md hover:bg-destructive/90 transition-colors ${
+                      deleteAccountMutation.isPending
+                        ? 'opacity-50 cursor-not-allowed'
+                        : ''
+                    }`}
+                  >
+                    {deleteAccountMutation.isPending
+                      ? 'Deleting Account...'
+                      : 'Delete Account'}
                   </button>
                 </div>
               </div>

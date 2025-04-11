@@ -31,6 +31,9 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
+        console.log('Checkout session completed:', session.id)
+        console.log('Customer:', session.customer)
+        console.log('Subscription:', session.subscription)
         await handleCheckoutSessionCompleted(session)
         break
       }

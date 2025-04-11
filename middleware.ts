@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
   '/create-profile(.*)',
   '/api/create-profile(.*)',
   '/api/check-profile(.*)',
+  '/api/profile/delete-account(.*)',
   '/api/openai/(.*)',
 ])
 
