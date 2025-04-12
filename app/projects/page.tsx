@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import CreateProject from '@/components/createProject'
+import CreateProject from '@/components/CreateProject'
 import { Project, ProjectDTO } from '@/app/lib/types'
 import { toast } from 'react-hot-toast'
 import { useUser } from '@clerk/nextjs'

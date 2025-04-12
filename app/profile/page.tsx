@@ -8,7 +8,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast' // Import toast
 import { useRouter } from 'next/navigation'
-import { Spinner } from '@/components/spinner'
+import { Spinner } from '@/components/Spinner'
 
 interface Subscription {
   subscriptionTier: string

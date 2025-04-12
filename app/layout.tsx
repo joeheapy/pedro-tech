@@ -3,7 +3,7 @@ import { Montserrat } from 'next/font/google'
 import './globals.css'
 import NavBar from '@/components/Navbar'
 import { ClerkProvider } from '@clerk/nextjs'
-import ReactQueryClientProvider from '@/components/react-query-client-provider'
+import ReactQueryClientProvider from '@/components/ReactQueryClientProvider'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
 import Footer from '@/components/Footer'
 
