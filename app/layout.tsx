@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './globals.css'
-import NavBar from '@/components/navbar'
+import NavBar from '@/components/Navbar'
 import { ClerkProvider } from '@clerk/nextjs'
 import ReactQueryClientProvider from '@/components/react-query-client-provider'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
-import Footer from '@/components/footer'
+import Footer from '@/components/Footer'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
