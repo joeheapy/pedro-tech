@@ -43,7 +43,7 @@ export default function NavBar() {
 
             <Link
               href="/projects"
-              className="text-foreground hover-text-primary font-medium"
+              className="text-foreground hover:text-primary font-medium"
             >
               Projects
             </Link>
@@ -87,13 +87,13 @@ export default function NavBar() {
           <SignedOut>
             <Link
               href="/"
-              className="text-foreground hover-text-primary font-medium"
+              className="text-foreground hover:text-primary font-medium"
             >
               Home
             </Link>
             <Link
               href="/sign-up"
-              className="text-foreground hover-text-primary font-medium"
+              className="text-foreground hover:text-primary font-medium"
             >
               Pricing
             </Link>
