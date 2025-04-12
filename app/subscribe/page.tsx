@@ -1,12 +1,11 @@
 'use client'
 
-// import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { availablePlans } from '@/app/lib/plans'
 import toast, { Toaster } from 'react-hot-toast'
-import { useEffect } from 'react'
 
 // Define response types
 type SubscribeResponse = {
@@ -17,39 +16,8 @@ type SubscribeError = {
   error: string
 }
 
-// This function sends a POST request to the /api/checkout route to subscribe the user to a plan
-async function subscribeToPlan(
-  planType: string,
-  userId: string,
-  email: string
-): Promise<SubscribeResponse> {
-  const response = await fetch('/api/checkout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      planType,
-      userId,
-      email,
-    }),
-  })
-
-  if (!response.ok) {
-    const errorData: SubscribeError = await response.json()
-    throw new Error(errorData.error || 'Something went wrong.')
-  }
-  const data: SubscribeResponse = await response.json()
-  return data
-}
-
-// This component renders the pricing page with subscription plans
-export default function Subscribe() {
-  const { user } = useUser()
-  const router = useRouter()
-  const userId = user?.id
-  const email = user?.emailAddresses[0].emailAddress || ''
-
-  // New code
-  // Handle subscription error messages
+// Separate component for handling search params
+function ErrorHandler() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -92,6 +60,40 @@ export default function Subscribe() {
       }
     }
   }, [searchParams])
+
+  return null // This component doesn't render anything
+}
+
+// This function sends a POST request to the /api/checkout route to subscribe the user to a plan
+async function subscribeToPlan(
+  planType: string,
+  userId: string,
+  email: string
+): Promise<SubscribeResponse> {
+  const response = await fetch('/api/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      planType,
+      userId,
+      email,
+    }),
+  })
+
+  if (!response.ok) {
+    const errorData: SubscribeError = await response.json()
+    throw new Error(errorData.error || 'Something went wrong.')
+  }
+  const data: SubscribeResponse = await response.json()
+  return data
+}
+
+// This component renders the pricing page with subscription plans
+export default function Subscribe() {
+  const { user } = useUser()
+  const router = useRouter()
+  const userId = user?.id
+  const email = user?.emailAddresses[0].emailAddress || ''
 
   const { mutate, isPending } = useMutation<
     SubscribeResponse,
@@ -137,18 +139,20 @@ export default function Subscribe() {
     <div className="px-4 py-8 sm:py-12 lg:py-16 ">
       <Toaster position="bottom-right" />
 
+      {/* Wrap the search params component in Suspense */}
+      <Suspense fallback={null}>
+        <ErrorHandler />
+      </Suspense>
+
       {/* Section Header */}
       <div>
-        <h2 className="text-3xl font-bold text-center mt-12 sm:text-5xl tracking-tight text-foreground">
+        <h2 className="text-3xl font-bold text-center mt-2 sm:text-5xl tracking-tight text-foreground">
           Pricing
         </h2>
-        <p className="max-w-3xl mx-auto mt-4 text-xl text-center text-muted-foreground">
-          Get started.
-        </p>
       </div>
 
       {/* Cards Container */}
-      <div className="mt-12 container mx-auto space-y-12 sm:grid-cols-1 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
+      <div className="mt-16 container mx-auto space-y-12 sm:grid-cols-1 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
         {availablePlans.map((plan, key) => (
           <div
             key={key}

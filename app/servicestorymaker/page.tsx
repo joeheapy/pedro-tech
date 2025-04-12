@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, JSX, useEffect } from 'react'
+import { useState, JSX, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { JourneyContainer } from '@/components/journeySteps/JourneyContainer'
 import { CustomerPainsContainer } from '@/components/customerPains/CustomerPainsContainer'
@@ -34,11 +34,27 @@ interface Project {
   updatedAt: Date
 }
 
+// Create a client component that uses useSearchParams and passes the projectId via props
+function ProjectParamsFetcher({
+  onProjectIdChange,
+}: {
+  onProjectIdChange: (id: string | null) => void
+}) {
+  const searchParams = useSearchParams()
+  const projectId = searchParams.get('projectId')
+
+  useEffect(() => {
+    onProjectIdChange(projectId)
+  }, [projectId, onProjectIdChange])
+
+  return null // This component doesn't render anything
+}
+
 export default function ServiceStoryMakerDashboard(): JSX.Element {
   const { Tokens, deductTokens, resetTokens } = useTokens()
   const { isSubscribed, isLoading, redirectToSubscribe } = useSubscription()
-  const searchParams = useSearchParams()
 
+  const [projectId, setProjectId] = useState<string | null>(null)
   const [journeySteps, setJourneySteps] = useState<JourneyStep[]>([])
   const [customerPains, setCustomerPains] = useState<CustomerPainPointData[]>(
     []
@@ -49,9 +65,6 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
   const [personaData, setPersonaData] = useState<PersonaData[]>([])
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [loadingProject, setLoadingProject] = useState<boolean>(false)
-
-  // Get project ID from URL query parameters
-  const projectId = searchParams.get('projectId')
 
   // Fetch project details if there's a project ID
   useEffect(() => {
@@ -152,6 +165,11 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
 
   return (
     <>
+      {/* Properly wrap useSearchParams in Suspense */}
+      <Suspense fallback={null}>
+        <ProjectParamsFetcher onProjectIdChange={setProjectId} />
+      </Suspense>
+
       {/* TOKEN RESET BUTTON IS HIDDEN */}
       <div className="sr-only">
         <TokenControls

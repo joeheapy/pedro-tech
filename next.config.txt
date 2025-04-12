@@ -1,0 +1,13 @@
+// This code tells Next.js to ignore TypeScript build errors
+// during the build process. This is useful for development
+// purposes, but it's recommended to fix the errors before
+// deploying your application to production.
+
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//   typescript: {
+//     ignoreBuildErrors: true,
+//   },
+// }
+
+// module.exports = nextConfig

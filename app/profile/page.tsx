@@ -323,7 +323,7 @@ export default function ProfilePage() {
                   </select>
                   <button
                     onClick={handleConfirmChangePlan}
-                    className="w-full mt-6 p-2 bg-primary mb-6 text-lg font-semibold text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                    className="w-full mt-6 p-2 bg-primary mb-6 text-lg font-semibold text-primary-foreground rounded-md hover:bg-emerald-700 transition-colors"
                   >
                     Save Change
                   </button>
@@ -331,14 +331,22 @@ export default function ProfilePage() {
 
                 {/* Unsubscribe */}
                 <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
-                  <h3 className="text-xl font-semibold mb-2 text-primary">
+                  <h3 className="text-xl font-semibold mb-2 text-cyan-600">
                     Cancel subscription
                   </h3>
                   <hr className="h-px my-2 mb-6 bg-background" />
+                  <p className="text-foreground mb-6">
+                    If you cancel your subscription, it will remain active until
+                    the end of your current billing period. After that, it won’t
+                    renew and no further payments will be taken. You’ll still
+                    have access to all features and your projects until your
+                    subscription expires. You can continue to make service
+                    stories for free.
+                  </p>
                   <button
                     onClick={handleUnsubscribe}
                     disabled={unsubscribeMutation.isPending}
-                    className={`w-full text-lg font-semibold bg-destructive text-destructive-foreground py-2 px-4 rounded-md hover:bg-destructive/90 transition-colors ${
+                    className={`w-full text-lg font-semibold bg-cyan-600 text-destructive-foreground py-2 px-4 rounded-md hover:bg-cyan-800 transition-colors ${
                       unsubscribeMutation.isPending
                         ? 'opacity-50 cursor-not-allowed'
                         : ''
@@ -353,17 +361,20 @@ export default function ProfilePage() {
                 {/* Add this after the Unsubscribe card */}
                 <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
                   <h3 className="text-xl font-semibold mb-2 text-destructive">
-                    Delete Account
+                    Delete account
                   </h3>
                   <hr className="h-px my-2 mb-6 bg-background" />
-                  <p className="text-muted-foreground mb-6">
-                    Permanently delete your account and all associated data.
-                    This action cannot be undone.
+                  <p className="text-foreground mb-6">
+                    If you choose to delete your account, please note that all
+                    your projects will be permanently deleted and cannot be
+                    recovered. No further payments will be taken after deletion.
+                    Please be aware that any payments already made are
+                    non-refundable, either in full or in part.
                   </p>
                   <button
                     onClick={handleDeleteAccount}
                     disabled={deleteAccountMutation.isPending}
-                    className={`w-full text-lg font-semibold bg-destructive text-destructive-foreground py-2 px-4 rounded-md hover:bg-destructive/90 transition-colors ${
+                    className={`w-full text-lg font-semibold bg-destructive text-destructive-foreground py-2 px-4 rounded-md hover:bg-red-800 transition-colors ${
                       deleteAccountMutation.isPending
                         ? 'opacity-50 cursor-not-allowed'
                         : ''

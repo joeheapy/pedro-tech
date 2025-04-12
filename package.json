@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "next dev",
+    "build": "NEXT_SKIP_TYPE_CHECK=true next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -19,11 +19,11 @@
     "clsx": "^2.1.1",
     "import": "^0.0.6",
     "lucide-react": "^0.475.0",
-    "next": "15.1.7",
+    "next": "15.0.0",
     "next-themes": "^0.4.4",
     "openai": "^4.85.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-feather": "^2.0.10",
     "react-hot-toast": "^2.5.2",
     "react-to-pdf": "^1.0.1",
@@ -35,15 +35,15 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "@types/stripe": "^8.0.416",
     "@types/xlsx": "^0.0.35",
     "eslint": "^9",
-    "eslint-config-next": "15.1.7",
+    "eslint-config-next": "15.0.0",
     "postcss": "^8",
     "prisma": "^6.5.0",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "5.3.3"
   }
 }

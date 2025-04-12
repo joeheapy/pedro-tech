@@ -31,12 +31,15 @@ export default function NavBar() {
         {/* Navigation Links */}
         <div className="space-x-6 flex items-center">
           <SignedIn>
-            <Link
-              href="/servicestorymaker"
-              className="text-foreground hover-text-primary font-medium"
-            >
-              Service Story Maker
-            </Link>
+            {/* Only show Service Story Maker link if NOT subscribed */}
+            {!isLoading && !isSubscribed && (
+              <Link
+                href="/servicestorymaker"
+                className="text-foreground hover:text-primary font-medium"
+              >
+                Service Story Maker
+              </Link>
+            )}
 
             <Link
               href="/projects"
