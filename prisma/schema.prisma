@@ -8,15 +8,18 @@ datasource db {
 }
 
 model Profile {
-  id                   String    @id @default(uuid())
-  userId               String    @unique
-  email                String
-  subscriptionTier     String?
-  subscriptionActive   Boolean   @default(false)
-  stripeSubscriptionId String?   @unique
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  projects             Project[] // Relation field to link with projects
+  id                      String    @id @default(uuid())
+  userId                  String    @unique
+  email                   String
+  subscriptionTier        String?
+  subscriptionActive      Boolean   @default(false)
+  subscriptionEndDate     DateTime?
+  stripeSubscriptionId    String?   @unique
+  cancellationRequested   Boolean   @default(false)
+  cancellationRequestedAt DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  projects                Project[] // Relation field to link with projects
 }
 
 model Project {

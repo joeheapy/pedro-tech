@@ -340,8 +340,7 @@ export default function ProfilePage() {
                     the end of your current billing period. After that, it won’t
                     renew and no further payments will be taken. You’ll still
                     have access to all features and your projects until your
-                    subscription expires. You can continue to make service
-                    stories for free.
+                    subscription expires.
                   </p>
                   <button
                     onClick={handleUnsubscribe}

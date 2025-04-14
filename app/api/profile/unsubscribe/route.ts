@@ -33,9 +33,15 @@ export async function POST() {
     await prisma.profile.update({
       where: { userId: clerkUser.id },
       data: {
-        subscriptionTier: null,
-        stripeSubscriptionId: null,
-        subscriptionActive: false,
+        // Keep these fields to maintain access until period end
+        // subscriptionTier: remains unchanged
+        // stripeSubscriptionId: remains unchanged
+        // subscriptionActive: remains true
+        cancellationRequested: true,
+        cancellationRequestedAt: new Date(),
+        subscriptionEndDate: new Date(
+          canceledSubscription.current_period_end * 1000
+        ),
       },
     })
 
