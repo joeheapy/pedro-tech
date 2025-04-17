@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import CreateProject from '@/components/CreateProject'
 import { Project, ProjectDTO } from '@/app/lib/types'
-import { toast } from 'react-hot-toast'
+import { notify } from '@/components/ui/toast-config'
 import { useUser } from '@clerk/nextjs'
 
 export default function ProjectsPage() {
@@ -39,7 +39,7 @@ export default function ProjectsPage() {
         setProjects(formattedProjects)
       } catch (error) {
         console.error('Error loading projects:', error)
-        toast.error('Failed to load projects')
+        notify.error('Failed to load projects')
       } finally {
         setLoading(false)
       }
@@ -78,10 +78,10 @@ export default function ProjectsPage() {
 
       setProjects([...projects, savedProject])
       setShowCreateForm(false)
-      toast.success('Project created successfully')
+      notify.success('Project created successfully')
     } catch (error) {
       console.error('Error saving project:', error)
-      toast.error('Failed to create project')
+      notify.error('Failed to create project')
     }
   }
 
@@ -96,10 +96,10 @@ export default function ProjectsPage() {
       }
 
       setProjects(projects.filter((project) => project.id !== id))
-      toast.success('Project deleted successfully')
+      notify.success('Project deleted successfully')
     } catch (error) {
       console.error('Error deleting project:', error)
-      toast.error('Failed to delete project')
+      notify.error('Failed to delete project')
     }
   }
 
@@ -112,7 +112,7 @@ export default function ProjectsPage() {
       )
     } catch (error) {
       console.error('Error updating project:', error)
-      toast.error('Failed to update project')
+      notify.error('Failed to update project')
     }
   }
 

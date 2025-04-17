@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { TariffRoundel } from '@/components/ui/tarrifRoundal'
 import { CsvDownloadButton } from './CsvDownloadButton'
-import { toast } from 'react-hot-toast'
+import { notify } from '@/components/ui/toast-config'
 import {
   JourneyStep,
   CustomerPainPointData,
@@ -110,7 +110,7 @@ export function CustomerPainsContainer({
       const currentProjectId = projectId || getProjectIdFromUrl()
 
       if (!currentProjectId) {
-        toast.error('No project ID found')
+        notify.error('No project ID found')
         return
       }
 
@@ -136,10 +136,10 @@ export function CustomerPainsContainer({
         )
       }
 
-      toast.success('Customer pain points saved successfully')
+      notify.success('Customer pain points saved successfully')
     } catch (error) {
       console.error('Error saving customer pain points:', error)
-      toast.error('Failed to save customer pain points')
+      notify.error('Failed to save customer pain points')
     }
   }
 
@@ -153,7 +153,7 @@ export function CustomerPainsContainer({
         if (data && data.painPoints && Array.isArray(data.painPoints)) {
           setPainPoints(data.painPoints)
           onCustomerPainPointsGenerated(data.painPoints)
-          toast.success('Loaded your customer pain points')
+          notify.success('Loaded your customer pain points')
         }
       } catch (error) {
         console.error('Error loading customer pain points:', error)

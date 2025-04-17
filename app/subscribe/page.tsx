@@ -5,7 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { availablePlans } from '@/app/lib/plans'
-import toast, { Toaster } from 'react-hot-toast'
+import { notify, GlobalToaster } from '@/components/ui/toast-config'
 
 // Define response types
 type SubscribeResponse = {
@@ -28,34 +28,14 @@ function ErrorHandler() {
       window.history.replaceState({}, '', newUrl)
 
       if (error === 'subscription-required') {
-        // More friendly message with guidance
-        toast(
-          'This feature requires an active subscription. Choose a plan to continue.',
-          {
-            icon: '🔐',
-            duration: 3000,
-            style: {
-              border: '1px solid #7c3aed',
-              padding: '16px',
-              color: '#1f2937',
-              background: '#f5f3ff',
-            },
-          }
+        // Use our custom notify.info function
+        notify.info(
+          'This feature requires an active subscription. Choose a plan to continue.'
         )
       } else if (error === 'subscription-check-failed') {
-        // More helpful error message
-        toast(
-          "We couldn't verify your subscription status. Please refresh or contact support if the problem persists.",
-          {
-            icon: '⚠️',
-            duration: 3000,
-            style: {
-              border: '1px solid #f59e0b',
-              padding: '16px',
-              color: '#1f2937',
-              background: '#fef3c7',
-            },
-          }
+        // Use our custom notify.warning function
+        notify.warning(
+          "We couldn't verify your subscription status. Please refresh or contact support if the problem persists."
         )
       }
     }
@@ -109,17 +89,17 @@ export default function Subscribe() {
     },
 
     onMutate: () => {
-      toast.loading('Heading to checkout...')
+      notify.loading('Heading to checkout...')
     },
 
     onSuccess: (data) => {
       window.location.href = data.url
-      // toast.success('Heading to checkout...')
+      // notify.success('Heading to checkout...')
     },
 
     onError: (error) => {
       console.log(error)
-      toast.error('Something went wrong. Please try again.')
+      notify.error('Something went wrong. Please try again.')
     },
   })
 
@@ -137,7 +117,7 @@ export default function Subscribe() {
 
   return (
     <div className="px-4 py-8 sm:py-12 lg:py-16 ">
-      <Toaster position="bottom-right" />
+      <GlobalToaster />
 
       {/* Wrap the search params component in Suspense */}
       <Suspense fallback={null}>

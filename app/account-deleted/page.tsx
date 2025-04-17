@@ -15,18 +15,18 @@ export default function AccountDeletedPage() {
   }, [isLoaded, isSignedIn])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full p-8 bg-card shadow-lg rounded-lg text-center">
         <h1 className="text-2xl font-bold text-foreground mb-4">
           Account Deleted
         </h1>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-foreground mb-6">
           Your account has been successfully deleted. Thank you for using our
           service.
         </p>
         <Link
           href="/"
-          className="block w-full py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+          className="text-x font-semibold block w-full py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-emerald-700 transition-colors"
         >
           Return to Home
         </Link>

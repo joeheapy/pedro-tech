@@ -20,7 +20,7 @@ import {
 import { useTokens } from '@/app/utils/useTokens'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import UpgradeYourAccess from '@/components/upgradeYourAccess'
-import { toast } from 'react-hot-toast'
+import { notify } from '@/components/ui/toast-config'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -87,7 +87,7 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
         })
       } catch (error) {
         console.error('Error fetching project:', error)
-        toast.error('Failed to load project details')
+        notify.error('Failed to load project details')
       } finally {
         setLoadingProject(false)
       }

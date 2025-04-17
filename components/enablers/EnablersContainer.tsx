@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { TariffRoundel } from '@/components/ui/tarrifRoundal'
 import { CsvDownloadButton } from './CsvDownloadButton'
-import { toast } from 'react-hot-toast'
+import { notify } from '@/components/ui/toast-config'
 import { getProjectIdFromUrl } from '@/app/utils/getProjectId'
 import {
   EnablerData,
@@ -57,7 +57,7 @@ export function EnablersContainer({
       const currentProjectId = projectId || getProjectIdFromUrl()
 
       if (!currentProjectId) {
-        toast.error('No project ID found')
+        notify.error('No project ID found')
         return
       }
 
@@ -81,10 +81,10 @@ export function EnablersContainer({
         throw new Error(errorData.error || 'Failed to save service enablers')
       }
 
-      toast.success('Service enablers saved successfully')
+      notify.success('Service enablers saved successfully')
     } catch (error) {
       console.error('Error saving service enablers:', error)
-      toast.error('Failed to save service enablers')
+      notify.error('Failed to save service enablers')
     }
   }
 
@@ -104,11 +104,11 @@ export function EnablersContainer({
         if (data && data.enablers && Array.isArray(data.enablers)) {
           setEnablerData(data.enablers)
           onEnablersGenerated(data.enablers)
-          toast.success('Loaded your service enablers')
+          notify.success('Loaded your service enablers')
         }
       } catch (error) {
         console.error('Error loading service enablers:', error)
-        toast.error('Failed to load service enablers')
+        notify.error('Failed to load service enablers')
       } finally {
         setDataLoading(false)
       }

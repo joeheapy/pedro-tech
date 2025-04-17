@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { TariffRoundel } from '@/components/ui/tarrifRoundal'
 import { CsvDownloadButton } from './CsvDownloadButton'
-import { toast } from 'react-hot-toast'
+import { notify } from '@/components/ui/toast-config'
 import { getProjectIdFromUrl } from '@/app/utils/getProjectId'
 import {
   JourneyStep,
@@ -43,7 +43,7 @@ export function BusinessPainsContainer({
       const currentProjectId = projectId || getProjectIdFromUrl()
 
       if (!currentProjectId) {
-        toast.error('No project ID found')
+        notify.error('No project ID found')
         return
       }
 
@@ -69,10 +69,10 @@ export function BusinessPainsContainer({
         )
       }
 
-      toast.success('Business pain points saved successfully')
+      notify.success('Business pain points saved successfully')
     } catch (error) {
       console.error('Error saving business pain points:', error)
-      toast.error('Failed to save business pain points')
+      notify.error('Failed to save business pain points')
     }
   }
 
@@ -92,11 +92,11 @@ export function BusinessPainsContainer({
         if (data && data.painPoints && Array.isArray(data.painPoints)) {
           setPainPoints(data.painPoints)
           onBusinessPainPointsGenerated(data.painPoints)
-          toast.success('Loaded your business pain points')
+          notify.success('Loaded your business pain points')
         }
       } catch (error) {
         console.error('Error loading business pain points:', error)
-        toast.error('Failed to load business pain points')
+        notify.error('Failed to load business pain points')
       } finally {
         setDataLoading(false)
       }

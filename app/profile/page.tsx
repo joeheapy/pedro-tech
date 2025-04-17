@@ -6,11 +6,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { availablePlans } from '@/app/lib/plans'
 import Image from 'next/image'
 import { useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Spinner } from '@/components/Spinner'
 import type Stripe from 'stripe'
 import Link from 'next/link'
+import { notify, GlobalToaster } from '@/components/ui/toast-config'
 
 interface Subscription {
   subscriptionTier: string
@@ -121,10 +121,10 @@ export default function ProfilePage() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
-      toast.success('Subscription plan updated successfully.')
+      notify.success('Subscription plan updated successfully.')
     },
     onError: (error) => {
-      toast.error(error.message)
+      notify.error(error.message)
     },
   })
 
@@ -143,13 +143,13 @@ export default function ProfilePage() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
-      toast.success(
+      notify.success(
         'Subscription canceled. It will remain active until the end of your billing period.'
       )
       // No redirect - let user see the updated UI
     },
     onError: (error) => {
-      toast.error(error.message)
+      notify.error(error.message)
     },
   })
 
@@ -166,14 +166,14 @@ export default function ProfilePage() {
       return res.json()
     },
     onSuccess: () => {
-      toast.success('Your account has been deleted successfully.')
+      notify.success('Your account has been deleted successfully.')
       // Sign out IMMEDIATELY - no delay
       signOut(() => {
         router.push('/')
       })
     },
     onError: (error) => {
-      toast.error(error.message)
+      notify.error(error.message)
     },
   })
 
@@ -207,17 +207,17 @@ export default function ProfilePage() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
-      toast.success(
+      notify.success(
         'Your subscription has been renewed and will continue automatically.'
       )
     },
 
     onError: (error: Error & ApiErrorResponse) => {
       if (error.redirectToSubscribe) {
-        toast.error('Your subscription has expired. Please select a new plan.')
+        notify.error('Your subscription has expired. Please select a new plan.')
         router.push('/subscribe')
       } else {
-        toast.error(error.message)
+        notify.error(error.message)
       }
     },
   })
@@ -292,7 +292,7 @@ export default function ProfilePage() {
   // Main Profile Page UI
   return (
     <div className="min-h-screen flex items-start justify-center p-8 sm:pt-16 lg:pt-24">
-      <Toaster position="top-center" />
+      <GlobalToaster />
       <div className="w-full max-w-5xl bg-background shadow-md rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left Panel: Profile Information */}

@@ -13,7 +13,7 @@ import { Loader2 } from 'lucide-react'
 import { TariffRoundel } from '@/components/ui/tarrifRoundal'
 import { CsvDownloadButton } from './CsvDownloadButton'
 import { getProjectIdFromUrl } from '@/app/utils/getProjectId'
-import { toast } from 'react-hot-toast'
+import { notify } from '@/components/ui/toast-config'
 
 interface PersonasContainerProps {
   journeySteps: JourneyStep[]
@@ -60,7 +60,7 @@ export function PersonasContainer({
               `Error ${response.status} fetching persona data:`,
               errorText
             )
-            toast.error('Failed to load existing persona data')
+            notify.error('Failed to load existing persona data')
           }
           return
         }
@@ -80,11 +80,11 @@ export function PersonasContainer({
 
           // Call the parent component's callback
           onPersonasGenerated(persona.personas as PersonaData[])
-          toast.success('Loaded your personas')
+          notify.success('Loaded your personas')
         }
       } catch (error) {
         console.error('Error fetching persona data:', error)
-        toast.error('Failed to load persona data')
+        notify.error('Failed to load persona data')
       } finally {
         setDataLoading(false)
       }
@@ -158,16 +158,16 @@ export function PersonasContainer({
       if (!saveResponse.ok) {
         const errorText = await saveResponse.text()
         console.error('Error saving personas:', errorText)
-        toast.error('Failed to save personas')
+        notify.error('Failed to save personas')
       } else {
         console.log('Personas saved successfully to database')
-        toast.success('Personas saved successfully')
+        notify.success('Personas saved successfully')
       }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to generate personas'
       )
-      toast.error('Failed to generate personas')
+      notify.error('Failed to generate personas')
     } finally {
       setLoading(false)
     }

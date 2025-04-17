@@ -12,7 +12,7 @@ import { JourneyStep, JourneyFormData } from '@/app/lib/types'
 // import { TariffRoundel } from '@/components/ui/tarrifRoundal'
 import CsvDownloadButton from './CsvDownloadButton'
 import { getProjectIdFromUrl } from '@/app/utils/getProjectId'
-import { toast } from 'react-hot-toast' // or your preferred toast library
+import { notify } from '@/components/ui/toast-config'
 
 interface JourneyContainerProps {
   onJourneyGenerated: (steps: JourneyStep[]) => void
@@ -98,7 +98,7 @@ export function JourneyContainer({
               `Error ${response.status} fetching journey data:`,
               errorText
             )
-            toast.error('Failed to load existing journey data')
+            notify.error('Failed to load existing journey data')
           }
           return
         }
@@ -126,7 +126,7 @@ export function JourneyContainer({
             console.log('Form data loaded successfully')
           } else {
             console.error('Invalid form data structure:', journeyData)
-            toast.error('Could not load form data: invalid format')
+            notify.error('Could not load form data: invalid format')
           }
 
           // Set journey steps if they exist
@@ -144,16 +144,16 @@ export function JourneyContainer({
 
             if (isValidData) {
               onJourneyGenerated(journeyData.journeyData as JourneyStep[])
-              toast.success('Loaded your service story')
+              notify.success('Loaded your service story')
             } else {
               console.error('Invalid journey step data structure')
-              toast.error('Could not load service story: invalid data format')
+              notify.error('Could not load service story: invalid data format')
             }
           }
         }
       } catch (error) {
         console.error('Error fetching journey data:', error)
-        toast.error('Failed to load service story data')
+        notify.error('Failed to load service story data')
       } finally {
         setDataLoading(false)
       }
@@ -275,12 +275,12 @@ export function JourneyContainer({
       if (!saveResponse.ok) {
         const errorText = await saveResponse.text()
         console.error('Error saving journey steps:', errorText)
-        toast.error('Failed to save journey steps')
+        notify.error('Failed to save journey steps')
         // Don't throw here - we already have the data in the UI
         // Just log the error but don't disrupt the user experience
       } else {
         console.log('Journey steps saved successfully to database')
-        toast.success('Journey steps saved successfully')
+        notify.success('Journey steps saved successfully')
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -341,7 +341,7 @@ export function JourneyContainer({
     // Get project ID from props or URL
     const currentProjectId = projectId || getProjectIdFromUrl()
     if (!currentProjectId) {
-      toast.error('Cannot save: Missing project ID')
+      notify.error('Cannot save: Missing project ID')
       return
     }
 
@@ -410,13 +410,13 @@ export function JourneyContainer({
       if (!saveResponse.ok) {
         const errorText = await saveResponse.text()
         console.error('Error saving edited step:', errorText)
-        toast.error('Failed to save changes')
+        notify.error('Failed to save changes')
       } else {
-        toast.success('Changes saved successfully')
+        notify.success('Changes saved successfully')
       }
     } catch (error) {
       console.error('Error saving step:', error)
-      toast.error('Failed to save changes')
+      notify.error('Failed to save changes')
     } finally {
       setSavingStepIndex(null)
     }

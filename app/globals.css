@@ -23,6 +23,9 @@
   --border: #e5e7eb;
   --input: #e5e7eb;
   --ring: #059669;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --border: #e2e8f0;
 
   /* Graph paper variables */
   --graph-background: #f9f9f9;
@@ -67,6 +70,9 @@
   --border: #374151;
   --input: #374151;
   --ring: #10b981;
+  --card: #1a1a1a;
+  --card-foreground: #f8f9fa;
+  --border: #2d3748;
 
   /* Graph paper variables - dark mode */
   --graph-background: #121212;

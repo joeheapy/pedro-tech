@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { CsvDownloadButton } from './CsvDownloadButton'
 import { TariffRoundel } from '@/components/ui/tarrifRoundal'
-import { toast } from 'react-hot-toast'
+import { notify } from '@/components/ui/toast-config'
 import { getProjectIdFromUrl } from '@/app/utils/getProjectId'
 import {
   FeatureData,
@@ -59,7 +59,7 @@ export function FeaturesContainer({
       const currentProjectId = getProjectIdFromUrl()
 
       if (!currentProjectId) {
-        toast.error('No project ID found')
+        notify.error('No project ID found')
         return
       }
 
@@ -83,10 +83,10 @@ export function FeaturesContainer({
         throw new Error(errorData.error || 'Failed to save service features')
       }
 
-      toast.success('Service features saved successfully')
+      notify.success('Service features saved successfully')
     } catch (error) {
       console.error('Error saving service features:', error)
-      toast.error('Failed to save service features')
+      notify.error('Failed to save service features')
     }
   }
 
@@ -107,11 +107,11 @@ export function FeaturesContainer({
         if (data && data.features && Array.isArray(data.features)) {
           setFeatureData(data.features)
           onFeaturesGenerated(data.features)
-          toast.success('Loaded your service features')
+          notify.success('Loaded your service features')
         }
       } catch (error) {
         console.error('Error loading service features:', error)
-        toast.error('Failed to load service features')
+        notify.error('Failed to load service features')
       } finally {
         setDataLoading(false)
       }
