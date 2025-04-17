@@ -9,6 +9,9 @@ interface Profile {
   subscriptionActive: boolean
   subscriptionTier: string | null
   stripeSubscriptionId: string | null
+  cancellationRequested: boolean
+  cancellationRequestedAt: Date | null
+  subscriptionEndDate: Date | null
 }
 
 interface ProfileResponse {
@@ -35,6 +38,9 @@ export async function GET(): Promise<NextResponse<ProfileResponse>> {
         subscriptionActive: true,
         subscriptionTier: true,
         stripeSubscriptionId: true,
+        cancellationRequested: true,
+        cancellationRequestedAt: true,
+        subscriptionEndDate: true,
       },
     })
 

@@ -1,19 +1,23 @@
 // app/profile/page.tsx
 'use client'
 
-import { useUser } from '@clerk/nextjs'
+import { useClerk, useUser } from '@clerk/nextjs'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { availablePlans } from '@/app/lib/plans' // Adjust the path based on your project structure
+import { availablePlans } from '@/app/lib/plans'
 import Image from 'next/image'
 import { useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast' // Import toast
+import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Spinner } from '@/components/Spinner'
+import type Stripe from 'stripe'
+import Link from 'next/link'
 
 interface Subscription {
   subscriptionTier: string
-  subscriptionActive: boolean // Changed from subscription_active
+  subscriptionActive: boolean
   stripeSubscriptionId: string | null
+  cancellationRequested: boolean // Add this
+  subscriptionEndDate: Date | null // Add this
 }
 
 interface SubscriptionResponse {
@@ -21,10 +25,20 @@ interface SubscriptionResponse {
   error?: string
 }
 
+interface ApiErrorResponse {
+  error: string
+  redirectToSubscribe?: boolean
+}
+
+interface ApiSuccessResponse {
+  subscription: Stripe.Subscription
+}
+
 export default function ProfilePage() {
   const { isLoaded, isSignedIn, user } = useUser()
   const queryClient = useQueryClient()
   const router = useRouter()
+  const { signOut } = useClerk()
 
   // State to manage selected priceId
   const [selectedPlan, setSelectedPlan] = useState<string>('')
@@ -115,11 +129,7 @@ export default function ProfilePage() {
   })
 
   // Mutation: Unsubscribe
-  const unsubscribeMutation = useMutation<
-    unknown, // Replace with actual response type if available
-    Error,
-    void
-  >({
+  const unsubscribeMutation = useMutation<unknown, Error, void>({
     mutationFn: async () => {
       const res = await fetch('/api/profile/unsubscribe', {
         method: 'POST',
@@ -133,7 +143,10 @@ export default function ProfilePage() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
-      router.push('/subscribe')
+      toast.success(
+        'Subscription canceled. It will remain active until the end of your billing period.'
+      )
+      // No redirect - let user see the updated UI
     },
     onError: (error) => {
       toast.error(error.message)
@@ -154,15 +167,67 @@ export default function ProfilePage() {
     },
     onSuccess: () => {
       toast.success('Your account has been deleted successfully.')
-      // Sign out and redirect after a brief delay
-      setTimeout(() => {
+      // Sign out IMMEDIATELY - no delay
+      signOut(() => {
         router.push('/')
-      }, 2000)
+      })
     },
     onError: (error) => {
       toast.error(error.message)
     },
   })
+
+  // Mutation: Renew Subscription
+  const renewSubscriptionMutation = useMutation<
+    ApiSuccessResponse,
+    Error & ApiErrorResponse, // Use the interface here
+    void
+  >({
+    mutationFn: async () => {
+      const res = await fetch('/api/profile/renew-subscription', {
+        method: 'POST',
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        // Create error with custom properties
+        const error = new Error(
+          data.error || 'Failed to renew subscription'
+        ) as Error & {
+          redirectToSubscribe?: boolean
+        }
+
+        error.redirectToSubscribe = data.redirectToSubscribe
+        throw error
+      }
+
+      return data as ApiSuccessResponse
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+      toast.success(
+        'Your subscription has been renewed and will continue automatically.'
+      )
+    },
+
+    onError: (error: Error & ApiErrorResponse) => {
+      if (error.redirectToSubscribe) {
+        toast.error('Your subscription has expired. Please select a new plan.')
+        router.push('/subscribe')
+      } else {
+        toast.error(error.message)
+      }
+    },
+  })
+
+  // Function to handle the renewal button click
+  const renewSubscription = () => {
+    if (confirm('Would you like to continue your subscription?')) {
+      renewSubscriptionMutation.mutate()
+    }
+  }
 
   // Handler for confirming plan change
   const handleConfirmChangePlan = () => {
@@ -198,6 +263,10 @@ export default function ProfilePage() {
         'Are you sure you want to delete your account? This action cannot be undone.'
       )
     ) {
+      // Set the deletion flag
+      localStorage.setItem('accountBeingDeleted', 'true')
+
+      // Proceed with deletion
       deleteAccountMutation.mutate()
     }
   }
@@ -238,7 +307,7 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-bold mb-2 text-foreground">
               {user.firstName} {user.lastName}
             </h1>
-            <p className="mb-4 text-muted-foreground">
+            <p className="mb-4 text-foreground">
               {user.primaryEmailAddress?.emailAddress}
             </p>
           </div>
@@ -256,108 +325,141 @@ export default function ProfilePage() {
               </div>
             ) : isError ? (
               <p className="text-destructive">{error?.message}</p>
-            ) : subscription ? (
+            ) : (
               <div className="space-y-6">
-                {/* Current Subscription Info */}
-                <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
-                  <h3 className="text-xl font-semibold mb-2 text-primary">
-                    Current plan
-                  </h3>
+                {/* Current Subscription Info - Only show if user has a subscription */}
+                {subscription?.subscription && (
+                  <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                    <h3 className="text-xl font-semibold mb-2 text-primary">
+                      Current plan
+                    </h3>
+                    <hr className="h-px my-2 mb-6 bg-background" />
 
-                  {/* Add separator here */}
-                  <hr className="h-px my-2 mb-6 bg-background" />
-
-                  {subscription?.subscription ? (
-                    <>
-                      <p className="text-foreground mb-2">
-                        <strong>Plan:</strong>{' '}
-                        {currentPlan?.name ||
-                          subscription.subscription.subscriptionTier}
-                      </p>
-                      <p className="text-foreground mb-2">
-                        <strong>Amount:</strong>{' '}
-                        {currentPlan ? `$${currentPlan.amount}` : 'N/A'}
-                      </p>
-                      <p className="text-foreground font-bold mb-2">
-                        <strong>Status:</strong>{' '}
-                        <span
-                          className={
-                            subscription.subscription.subscriptionActive
-                              ? 'text-primary'
-                              : 'text-destructive'
-                          }
-                        >
-                          {subscription.subscription.subscriptionActive
-                            ? 'ACTIVE'
-                            : 'INACTIVE'}
-                        </span>
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-muted-foreground">
-                      No subscription found.
+                    <p className="text-foreground mb-2">
+                      <strong>Plan:</strong>{' '}
+                      {subscription.subscription.subscriptionActive
+                        ? currentPlan?.name ||
+                          subscription.subscription.subscriptionTier
+                        : 'Not subscribed'}
                     </p>
+                    <p className="text-foreground mb-2">
+                      <strong>Amount:</strong>{' '}
+                      {currentPlan ? `$${currentPlan.amount}` : 'Free'}
+                    </p>
+
+                    {/* Show View Pricing button ONLY for users with inactive subscriptions */}
+                    {subscription?.subscription &&
+                      !subscription.subscription.subscriptionActive && (
+                        <Link
+                          href="/subscribe"
+                          className="text-xl mt-4 w-full text-center block py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-emerald-700 transition-colors font-semibold"
+                        >
+                          View Pricing
+                        </Link>
+                      )}
+                  </div>
+                )}
+
+                {/* Change Subscription Plan - Only show for active subscriptions that are NOT cancelled */}
+                {subscription?.subscription?.subscriptionActive &&
+                  !subscription?.subscription?.cancellationRequested && (
+                    <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                      <h3 className="text-xl font-semibold mb-2 text-primary">
+                        Change subscription plan
+                      </h3>
+                      <hr className="h-px my-2 mb-6 bg-background" />
+                      <select
+                        onChange={handleChangePlan}
+                        defaultValue={currentPlan?.interval}
+                        className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                        disabled={changePlanMutation.isPending}
+                      >
+                        <option value="" disabled>
+                          Select a new plan
+                        </option>
+                        {availablePlans.map((plan, key) => (
+                          <option key={key} value={plan.interval}>
+                            {plan.name} - ${plan.amount} / {plan.interval}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={handleConfirmChangePlan}
+                        className="w-full mt-6 p-2 bg-primary mb-6 text-lg font-semibold text-primary-foreground rounded-md hover:bg-emerald-700 transition-colors"
+                      >
+                        Save Change
+                      </button>
+                    </div>
                   )}
-                </div>
 
-                {/* Change Subscription Plan */}
-                <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
-                  <h3 className="text-xl font-semibold mb-2 text-primary">
-                    Change subscription plan
-                  </h3>
-                  <hr className="h-px my-2 mb-6 bg-background" />
-                  <select
-                    onChange={handleChangePlan}
-                    defaultValue={currentPlan?.interval}
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    disabled={changePlanMutation.isPending}
-                  >
-                    <option value="" disabled>
-                      Select a new plan
-                    </option>
-                    {availablePlans.map((plan, key) => (
-                      <option key={key} value={plan.interval}>
-                        {plan.name} - ${plan.amount} / {plan.interval}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={handleConfirmChangePlan}
-                    className="w-full mt-6 p-2 bg-primary mb-6 text-lg font-semibold text-primary-foreground rounded-md hover:bg-emerald-700 transition-colors"
-                  >
-                    Save Change
-                  </button>
-                </div>
+                {/* Unsubscribe - Only show for active subscriptions that are NOT cancelled */}
+                {subscription?.subscription?.subscriptionActive &&
+                  !subscription?.subscription?.cancellationRequested && (
+                    <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                      <h3 className="text-xl font-semibold mb-2 text-cyan-600">
+                        Cancel subscription
+                      </h3>
+                      <hr className="h-px my-2 mb-6 bg-background" />
+                      <p className="text-foreground mb-6">
+                        If you cancel your subscription, it will remain active
+                        until the end of your current billing period. After
+                        that, it will not renew and no further payments will be
+                        taken. You will still have access to all features and
+                        your projects until your subscription expires.
+                      </p>
+                      <button
+                        onClick={handleUnsubscribe}
+                        disabled={unsubscribeMutation.isPending}
+                        className={`w-full text-lg font-semibold bg-cyan-600 text-destructive-foreground py-2 px-4 rounded-md hover:bg-cyan-800 transition-colors ${
+                          unsubscribeMutation.isPending
+                            ? 'opacity-50 cursor-not-allowed'
+                            : ''
+                        }`}
+                      >
+                        {unsubscribeMutation.isPending
+                          ? 'Unsubscribing...'
+                          : 'Unsubscribe'}
+                      </button>
+                    </div>
+                  )}
 
-                {/* Unsubscribe */}
-                <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
-                  <h3 className="text-xl font-semibold mb-2 text-cyan-600">
-                    Cancel subscription
-                  </h3>
-                  <hr className="h-px my-2 mb-6 bg-background" />
-                  <p className="text-foreground mb-6">
-                    If you cancel your subscription, it will remain active until
-                    the end of your current billing period. After that, it won’t
-                    renew and no further payments will be taken. You’ll still
-                    have access to all features and your projects until your
-                    subscription expires.
-                  </p>
-                  <button
-                    onClick={handleUnsubscribe}
-                    disabled={unsubscribeMutation.isPending}
-                    className={`w-full text-lg font-semibold bg-cyan-600 text-destructive-foreground py-2 px-4 rounded-md hover:bg-cyan-800 transition-colors ${
-                      unsubscribeMutation.isPending
-                        ? 'opacity-50 cursor-not-allowed'
-                        : ''
-                    }`}
-                  >
-                    {unsubscribeMutation.isPending
-                      ? 'Unsubscribing...'
-                      : 'Unsubscribe'}
-                  </button>
-                </div>
+                {/* Show "Subscription Ending" message when subscription is active but cancellation requested */}
+                {subscription?.subscription?.subscriptionActive &&
+                  subscription?.subscription?.cancellationRequested && (
+                    <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                      <h3 className="text-xl font-semibold mb-2 text-amber-600">
+                        Subscription ending soon
+                      </h3>
+                      <hr className="h-px my-2 mb-6 bg-background" />
+                      <p className="text-foreground mb-4">
+                        Your subscription has been cancelled but will remain
+                        active until the end of your current billing period.
+                      </p>
+                      {subscription?.subscription?.subscriptionEndDate && (
+                        <p className="font-semibold mb-6">
+                          Access ends on:{' '}
+                          {new Date(
+                            subscription.subscription.subscriptionEndDate
+                          ).toLocaleDateString()}
+                        </p>
+                      )}
+                      <button
+                        onClick={renewSubscription}
+                        disabled={renewSubscriptionMutation.isPending}
+                        className={`w-full text-center block py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold ${
+                          renewSubscriptionMutation.isPending
+                            ? 'opacity-50 cursor-not-allowed'
+                            : ''
+                        }`}
+                      >
+                        {renewSubscriptionMutation.isPending
+                          ? 'Processing...'
+                          : 'Restart Subscription'}
+                      </button>
+                    </div>
+                  )}
 
-                {/* Add this after the Unsubscribe card */}
+                {/* Delete Account - Show for all signed-in users */}
                 <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
                   <h3 className="text-xl font-semibold mb-2 text-destructive">
                     Delete account
@@ -384,11 +486,27 @@ export default function ProfilePage() {
                       : 'Delete Account'}
                   </button>
                 </div>
+
+                {/* Show message for non-subscribed users */}
+                {!subscription?.subscription && (
+                  <div className="bg-card shadow-sm rounded-lg p-4 border border-border">
+                    <h3 className="text-xl font-semibold mb-2 text-primary">
+                      No active subscription
+                    </h3>
+                    <hr className="h-px my-2 mb-6 bg-background" />
+                    <p className="text-foreground mb-6">
+                      You are not subscribed to any plan. Subscribe to access
+                      premium features.
+                    </p>
+                    <a
+                      href="/subscribe"
+                      className="w-full text-center block py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
+                    >
+                      View Plans
+                    </a>
+                  </div>
+                )}
               </div>
-            ) : (
-              <p className="text-muted-foreground">
-                You are not subscribed to any plan.
-              </p>
             )}
           </div>
         </div>

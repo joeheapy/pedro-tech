@@ -39,10 +39,21 @@ export default function CreateProfile() {
   })
 
   useEffect(() => {
+    // Check for deletion flag
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('accountBeingDeleted') === 'true'
+    ) {
+      // Don't remove flag here - just redirect
+      router.push('/account-deleted')
+      return
+    }
+
+    // Normal profile creation
     if (isLoaded && isSignedIn && !isPending) {
       mutate()
     }
-  }, [isLoaded, isSignedIn, isPending, mutate])
+  }, [isLoaded, isSignedIn, isPending, mutate, router])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">

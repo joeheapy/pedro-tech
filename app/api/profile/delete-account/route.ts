@@ -21,12 +21,11 @@ export async function DELETE() {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    // Check if user has an active subscription
-    if (profile.stripeSubscriptionId) {
+    // Check if user has an active subscription before canceling in Stripe
+    if (profile.subscriptionActive && profile.stripeSubscriptionId) {
       try {
         // Cancel the subscription in Stripe IMMEDIATELY
         await stripe.subscriptions.cancel(profile.stripeSubscriptionId)
-
         console.log(
           `Cancelled subscription: ${profile.stripeSubscriptionId} for user: ${userId}`
         )
@@ -34,33 +33,20 @@ export async function DELETE() {
         console.error('Error canceling Stripe subscription:', stripeError)
         // Continue with account deletion even if subscription cancellation fails
       }
+    } else {
+      console.log(`No active subscription to cancel for user: ${userId}`)
     }
 
-    // Delete all associated data (projects, journey steps, business pains, etc.)
-    await prisma.$transaction(async (tx) => {
-      // Delete any business pains
-      await tx.businesspains.deleteMany({
-        where: {
-          project: {
-            profileId: profile.id,
-          },
-        },
-      })
-
-      // Delete all projects belonging to the user
-      await tx.project.deleteMany({
-        where: {
-          profileId: profile.id,
-        },
-      })
-
-      // Delete the profile itself
-      await tx.profile.delete({
-        where: { id: profile.id },
-      })
+    // Delete the profile - cascade will handle deleting all related data
+    await prisma.profile.delete({
+      where: { id: profile.id },
     })
 
-    return NextResponse.json({ success: true })
+    // Add a flag to indicate account deletion was successful
+    return NextResponse.json({
+      success: true,
+      accountDeleted: true,
+    })
   } catch (error) {
     console.error('Error deleting account:', error)
     return NextResponse.json(

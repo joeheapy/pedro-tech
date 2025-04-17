@@ -17,13 +17,17 @@ const isPublicRoute = createRouteMatcher([
   '/api/check-profile(.*)',
   '/api/profile/delete-account(.*)',
   '/api/openai/(.*)',
+  '/account-deleted',
 ])
 
 // 2. Define routes that require an active subscription
 const requiresSubscriptionRoute = createRouteMatcher([
-  // '/servicestorymaker(.*)',
-  '/profile(.*)',
-  '/projects(.*)', // Added profile routes to subscription-protected routes
+  '/projects(.*)', // ONLY projects requires subscription now
+])
+
+// 3. Define routes that only require authentication and profile (no subscription)
+const requiresAuthRoute = createRouteMatcher([
+  '/profile(.*)', // Profile only requires auth, not subscription
 ])
 
 // Sign-up route matcher - used to prevent redirects during sign-up flow
@@ -101,8 +105,87 @@ export default clerkMiddleware(async (auth, req) => {
     }
   }
 
-  // Check subscription for routes that require it (servicestorymaker, projects and profile)
-  if (userId && requiresSubscriptionRoute(req)) {
+  // After checking if user is signed in...
+
+  // First check if user has a profile for ANY authenticated route
+  if (userId && (requiresSubscriptionRoute(req) || requiresAuthRoute(req))) {
+    try {
+      // Check if profile exists
+      const profileCheck = await fetch(
+        `${origin}/api/check-profile?userId=${userId}`,
+        {
+          method: 'GET',
+          headers: { cookie: req.headers.get('cookie') || '' },
+        }
+      )
+
+      const profileData = await profileCheck.json()
+
+      // If no profile exists, redirect to create-profile
+      if (!profileData.exists) {
+        console.log('No profile found - redirecting to create-profile')
+        return NextResponse.redirect(new URL('/create-profile', origin))
+      }
+
+      // ONLY check subscription for routes that require it
+      if (requiresSubscriptionRoute(req)) {
+        // Existing subscription check code here
+        try {
+          // First check if profile exists
+          const profileCheck = await fetch(
+            `${origin}/api/check-profile?userId=${userId}`,
+            {
+              method: 'GET',
+              headers: { cookie: req.headers.get('cookie') || '' },
+            }
+          )
+
+          const profileData = await profileCheck.json()
+
+          // If no profile exists, redirect to create-profile
+          if (!profileData.exists) {
+            console.log('No profile found - redirecting to create-profile')
+            return NextResponse.redirect(new URL('/create-profile', origin))
+          }
+
+          // Then check subscription
+          const checkSubRes = await fetch(
+            `${origin}/api/check-subscription?userId=${userId}`,
+            {
+              method: 'GET',
+              headers: { cookie: req.headers.get('cookie') || '' },
+            }
+          )
+
+          if (!checkSubRes.ok) {
+            console.log('Subscription check failed')
+            return NextResponse.redirect(
+              new URL('/subscribe?error=subscription-check-failed', origin)
+            )
+          }
+
+          const data = await checkSubRes.json()
+
+          if (!data.subscriptionActive) {
+            console.log('No active subscription - redirecting to subscribe')
+            return NextResponse.redirect(
+              new URL('/subscribe?error=subscription-required', origin)
+            )
+          }
+        } catch (error) {
+          console.error('Subscription or profile check failed:', error)
+          return NextResponse.redirect(
+            new URL('/subscribe?error=subscription-check-failed', origin)
+          )
+        }
+      }
+    } catch (error) {
+      console.error('Profile check failed:', error)
+    }
+  }
+
+  // Check authentication and profile for routes that require it (profile)
+  if (userId && requiresAuthRoute(req)) {
     try {
       // First check if profile exists
       const profileCheck = await fetch(
@@ -120,35 +203,10 @@ export default clerkMiddleware(async (auth, req) => {
         console.log('No profile found - redirecting to create-profile')
         return NextResponse.redirect(new URL('/create-profile', origin))
       }
-
-      // Then check subscription
-      const checkSubRes = await fetch(
-        `${origin}/api/check-subscription?userId=${userId}`,
-        {
-          method: 'GET',
-          headers: { cookie: req.headers.get('cookie') || '' },
-        }
-      )
-
-      if (!checkSubRes.ok) {
-        console.log('Subscription check failed')
-        return NextResponse.redirect(
-          new URL('/subscribe?error=subscription-check-failed', origin)
-        )
-      }
-
-      const data = await checkSubRes.json()
-
-      if (!data.subscriptionActive) {
-        console.log('No active subscription - redirecting to subscribe')
-        return NextResponse.redirect(
-          new URL('/subscribe?error=subscription-required', origin)
-        )
-      }
     } catch (error) {
-      console.error('Subscription or profile check failed:', error)
+      console.error('Profile check failed:', error)
       return NextResponse.redirect(
-        new URL('/subscribe?error=subscription-check-failed', origin)
+        new URL('/create-profile?error=profile-check-failed', origin)
       )
     }
   }
