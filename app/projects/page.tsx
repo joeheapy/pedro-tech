@@ -119,10 +119,10 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="min-h-screen pt-16 px-4 sm:px-6 pb-8">
+    <main className="min-h-screen pt-8 px-4 sm:px-6 pb-6">
       <div className="container mx-auto max-w-3xl">
         {/* Flex container for title and button - stacks on mobile */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-y-6 sm:gap-4 mb-12">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-y-6 sm:gap-4 mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">
             {isLoaded && user?.firstName ? `${user.firstName}'s` : 'Your'}{' '}
             projects
@@ -138,12 +138,10 @@ export default function ProjectsPage() {
 
         {/* Create project form */}
         {showCreateForm && (
-          <div className="bg-card rounded-lg shadow-md p-4 sm:p-6 mb-6">
-            <CreateProject
-              onSave={handleSaveProject}
-              onCancel={() => setShowCreateForm(false)}
-            />
-          </div>
+          <CreateProject
+            onSave={handleSaveProject}
+            onCancel={() => setShowCreateForm(false)}
+          />
         )}
 
         {/* Loading state */}

@@ -260,15 +260,12 @@ export default function CreateProject({
     )
   }
 
-  // Render create mode (unchanged)
+  // Render create mode
   if (mode === 'create') {
     return (
-      <Card className="mb-6 w-full">
+      <Card className="gradient-blue-dark mb-6 w-full">
         <CardHeader>
-          {/* <CardTitle className="text-xl">Create New Project</CardTitle> */}
-          {/* <CardDescription>
-            Enter the details of your new service design project
-          </CardDescription> */}
+          <CardTitle className="text-xl">Create New Project</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -335,25 +332,35 @@ export default function CreateProject({
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-between items-center">
-          <div className="text-sm text-foreground">
+        <CardFooter className="flex flex-col sm:flex-row gap-4 sm:gap-2 items-start sm:items-center">
+          {/* Required field info - full width on mobile, at bottom */}
+          <div className="text-sm text-foreground order-3 sm:order-1 w-full sm:w-auto mb-2 sm:mb-0">
             <span className="text-destructive">*</span> Required field (min.{' '}
             {minCharacters} characters)
           </div>
-          <div className="flex items-center gap-2">
-            {onCancel && (
-              <Button variant="ghost" onClick={onCancel}>
-                Cancel
-              </Button>
-            )}
+
+          {/* Action buttons - right aligned on desktop */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto sm:ml-auto order-1 sm:order-2">
+            {/* Save Project button - FIRST */}
             <Button
               onClick={handleSave}
               disabled={!isTitleValid || !isDescriptionValid}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 justify-center items-center"
             >
               <Save size={18} className="mr-2" />
               Save Project
             </Button>
+
+            {/* Cancel button - SECOND */}
+            {onCancel && (
+              <Button
+                variant="outline"
+                onClick={onCancel}
+                className="justify-center items-center"
+              >
+                Cancel
+              </Button>
+            )}
           </div>
         </CardFooter>
       </Card>
