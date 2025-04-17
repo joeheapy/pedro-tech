@@ -185,15 +185,15 @@ export default function ServiceStoryMakerDashboard(): JSX.Element {
             <div>
               <Card className="gradient-blue-dark border-none">
                 <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-2xl font-bold text-primary-background">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                    <CardTitle className="text-2xl font-bold text-primary-background break-words">
                       {currentProject.title}
                     </CardTitle>
-                    <Link href="/projects">
+                    <Link href="/projects" className="w-full sm:w-auto">
                       <Button
                         variant="secondary"
                         size="default"
-                        className="gap-1 text-base"
+                        className="gap-1 text-base w-full sm:w-auto"
                       >
                         <ArrowLeft size={16} />
                         Back to Projects

@@ -105,8 +105,6 @@ export default function ProjectsPage() {
 
   const handleUpdateProject = async (updatedProject: Project) => {
     try {
-      // No need to call API here as it's already called in the component
-      // Just update the local state
       setProjects(
         projects.map((p) => (p.id === updatedProject.id ? updatedProject : p))
       )
@@ -121,16 +119,16 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="min-h-screen pt-12 p-4">
-      <div className="container mx-auto">
-        {/* Flex container for title and button */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">
+    <main className="min-h-screen pt-16 px-4 sm:px-6 pb-8">
+      <div className="container mx-auto max-w-3xl">
+        {/* Flex container for title and button - stacks on mobile */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-y-6 sm:gap-4 mb-12">
+          <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">
             {isLoaded && user?.firstName ? `${user.firstName}'s` : 'Your'}{' '}
             projects
           </h1>
           <button
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors font-semibold flex items-center gap-2"
+            className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors font-semibold flex items-center gap-2 w-full sm:w-auto justify-center"
             onClick={() => setShowCreateForm(true)}
           >
             <Plus size={18} />
@@ -140,10 +138,12 @@ export default function ProjectsPage() {
 
         {/* Create project form */}
         {showCreateForm && (
-          <CreateProject
-            onSave={handleSaveProject}
-            onCancel={() => setShowCreateForm(false)}
-          />
+          <div className="bg-card rounded-lg shadow-md p-4 sm:p-6 mb-6">
+            <CreateProject
+              onSave={handleSaveProject}
+              onCancel={() => setShowCreateForm(false)}
+            />
+          </div>
         )}
 
         {/* Loading state */}
@@ -157,22 +157,26 @@ export default function ProjectsPage() {
         ) : (
           <>
             {/* List of projects */}
-            {projects.map((project) => (
-              <CreateProject
-                key={project.id}
-                initialMode="view"
-                project={project}
-                onDelete={handleDeleteProject}
-                onGoToProject={handleGoToProject}
-                onSave={handleUpdateProject}
-              />
-            ))}
+            <div className="space-y-6">
+              {projects.map((project) => (
+                <CreateProject
+                  key={project.id}
+                  initialMode="view"
+                  project={project}
+                  onDelete={handleDeleteProject}
+                  onGoToProject={handleGoToProject}
+                  onSave={handleUpdateProject}
+                />
+              ))}
+            </div>
 
             {/* Empty state */}
             {projects.length === 0 && !showCreateForm && (
-              <p className="text-center text-muted-foreground mt-4">
-                No projects to display. Create a new project to get started.
-              </p>
+              <div className="text-center py-12 bg-card rounded-lg shadow-sm">
+                <p className="text-muted-foreground">
+                  No projects to display. Create a new project to get started.
+                </p>
+              </div>
             )}
           </>
         )}

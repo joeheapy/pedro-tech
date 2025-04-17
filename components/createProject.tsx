@@ -154,7 +154,9 @@ export default function CreateProject({
     return (
       <Card className="gradient-pink-dark mb-6 w-full">
         <CardHeader>
-          <CardTitle className="text-xl">Edit Project</CardTitle>
+          <CardTitle className="text-xl">
+            Edit details for &lsquo;{project?.title || 'project'}&rsquo;
+          </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -221,19 +223,20 @@ export default function CreateProject({
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-between items-center">
-          <div className="text-sm text-muted-foreground">
+        <CardFooter className="flex flex-col sm:flex-row gap-4 sm:gap-2 items-start sm:items-center">
+          {/* Required field info - full width on mobile */}
+          <div className="text-sm text-foreground order-3 sm:order-1 w-full sm:w-auto mb-2 sm:mb-0">
             <span className="text-destructive">*</span> Required field (min.{' '}
             {minCharacters} characters)
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => setMode('view')}>
-              Cancel
-            </Button>
+
+          {/* Action buttons - right aligned on desktop */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto sm:ml-auto order-1 sm:order-2">
+            {/* Save Changes button - FIRST */}
             <Button
               onClick={handleSaveEdit}
               disabled={!isTitleValid || !isDescriptionValid || isSubmitting}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 justify-center items-center"
             >
               {isSubmitting ? (
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
@@ -241,6 +244,15 @@ export default function CreateProject({
                 <Save size={18} className="mr-2" />
               )}
               Save Changes
+            </Button>
+
+            {/* Cancel button - SECOND */}
+            <Button
+              variant="outline"
+              onClick={() => setMode('view')}
+              className="justify-center items-center"
+            >
+              Cancel
             </Button>
           </div>
         </CardFooter>
@@ -324,7 +336,7 @@ export default function CreateProject({
         </CardContent>
 
         <CardFooter className="flex justify-between items-center">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-foreground">
             <span className="text-destructive">*</span> Required field (min.{' '}
             {minCharacters} characters)
           </div>
@@ -350,7 +362,7 @@ export default function CreateProject({
 
   // Render view mode (project card) - add Edit button
   return (
-    <Card className="gradient-blue-dark mb-4">
+    <Card className="gradient-blue-dark mb-4 w-full">
       <CardHeader>
         <CardTitle className="text-2xl text-foreground font-bold">
           {title}
@@ -359,47 +371,58 @@ export default function CreateProject({
           {description}
         </CardDescription>
       </CardHeader>
-      <CardFooter className="flex justify-between items-center">
-        {/* Dates in separate muted boxes */}
-        <div className="flex gap-3 text-sm">
-          <div className="bg-muted px-3 py-2 rounded-md">
-            <p>Created on {formatDate(project?.createdAt || new Date())}</p>
-          </div>
-          <div className="bg-muted px-3 py-2 rounded-md">
-            <p>Last modified {formatDate(project?.updatedAt || new Date())}</p>
-          </div>
-        </div>
 
-        {/* Buttons on the right */}
-        <div className="flex items-center gap-2">
-          {/* Edit button */}
-          <Button
-            variant="outline"
-            onClick={handleEdit}
-            className="text-base last:hover:bg-primary/10"
-          >
-            <Pencil size={18} className="mr-2" />
-            Edit
-          </Button>
-
+      {/* Responsive CardFooter layout - always stacked vertically */}
+      <CardFooter className="flex flex-col gap-6">
+        {/* Buttons - stacked on mobile, row on larger screens */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-2 w-full">
           {/* Go to project button */}
           <Button
-            className="bg-primary text-base text-primary-foreground hover:bg-primary/90"
+            className="bg-primary text-base text-primary-foreground hover:bg-primary/90 justify-center"
             onClick={() => project?.id && onGoToProject?.(project.id)}
           >
             <ArrowRight size={18} className="mr-2" />
             Go to Project
           </Button>
 
+          {/* Edit button */}
+          <Button
+            variant="outline"
+            onClick={handleEdit}
+            className="text-base hover:bg-primary/10 justify-center"
+          >
+            <Pencil size={18} className="mr-2" />
+            Edit Details
+          </Button>
+
           {/* Delete button */}
           <Button
             variant="outline"
-            size="icon"
-            className="text-forground hover:bg-destructive/10 hover:text-destructive"
-            onClick={() => project?.id && onDelete?.(project.id)}
+            onClick={() => {
+              if (
+                project?.id &&
+                window.confirm(
+                  'Are you sure you want to delete this project? This action cannot be undone.'
+                )
+              ) {
+                onDelete?.(project.id)
+              }
+            }}
+            className="text-foreground hover:bg-destructive/10 hover:text-destructive justify-center sm:w-auto"
           >
-            <Trash2 size={18} />
+            <Trash2 size={18} className="mr-2 sm:mr-0 sm:flex-none" />
+            <span className="text-base sm:sr-only">Delete</span>
           </Button>
+        </div>
+
+        {/* Dates - stacked on small screens, row on larger screens */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm w-full">
+          <div className="bg-muted px-3 py-2 rounded-md">
+            <p>Created on {formatDate(project?.createdAt || new Date())}</p>
+          </div>
+          <div className="bg-muted px-3 py-2 rounded-md">
+            <p>Last modified {formatDate(project?.updatedAt || new Date())}</p>
+          </div>
         </div>
       </CardFooter>
     </Card>
