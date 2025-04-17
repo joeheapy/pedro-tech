@@ -263,7 +263,7 @@ export default function CreateProject({
   // Render create mode
   if (mode === 'create') {
     return (
-      <Card className="gradient-blue-dark mb-6 w-full">
+      <Card className="gradient-teal-lime mb-6 w-full">
         <CardHeader>
           <CardTitle className="text-xl">Create New Project</CardTitle>
         </CardHeader>
