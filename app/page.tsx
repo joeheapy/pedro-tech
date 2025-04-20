@@ -17,7 +17,7 @@ export default function HomePage() {
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-foreground/80">
               Streamline your service design process with AI-generated journeys,
-              personas, and recommendations.
+              personas, and service feature recommendations.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
@@ -48,8 +48,7 @@ export default function HomePage() {
               Customer Journey Mapping
             </h3>
             <p className="text-muted-foreground">
-              Create and visualize detailed customer journeys with AI
-              assistance.
+              Start service design by generating a simple customer journey.
             </p>
           </div>
 
@@ -163,7 +162,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="bg-card p-6 rounded-xl shadow-sm">
+          <div className="bg-card p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
             <div className="flex items-center mb-4">
               <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
                 <span className="text-primary font-bold">CM</span>
@@ -184,7 +183,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="bg-card p-6 rounded-xl shadow-sm">
+          <div className="bg-card p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
             <div className="flex items-center mb-4">
               <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
                 <span className="text-primary font-bold">JL</span>
@@ -203,7 +202,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="bg-card p-6 rounded-xl shadow-sm md:col-span-2 lg:col-span-1">
+          <div className="bg-card p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow md:col-span-2 lg:col-span-1">
             <div className="flex items-center mb-4">
               <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
                 <span className="text-primary font-bold">SD</span>
