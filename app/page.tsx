@@ -34,6 +34,20 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+          <div className="hidden md:block order-1 lg:order-2 justify-center">
+            <div className="relative w-full max-w-lg h-[300px] md:h-[400px] rounded-lg overflow-hidden shadow-2xl">
+              <div
+                className="absolute inset-0 border-4 border-dashed border-black rounded-lg flex items-center justify-center bg-transparent"
+                aria-label="Service Design Dashboard"
+              >
+                <div className="text-center p-4">
+                  <p className="text-foreground/70 text-lg">
+                    This will eventually be an image.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
